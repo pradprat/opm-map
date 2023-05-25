@@ -1,0 +1,37 @@
+{
+  "name": "gatsby-starter-minimal-ts",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A Gatsby starter written in TypeScript with no plugins and a single welcome page.",
+  "author": "Jude Agboola",
+  "keywords": [
+    "gatsby"
+  ],
+  "scripts": {
+    "develop": "gatsby develop",
+    "start": "gatsby develop",
+    "build": "gatsby build",
+    "serve": "gatsby serve",
+    "clean": "gatsby clean",
+    "typecheck": "tsc --noEmit"
+  },
+  "license": "0BSD",
+  "dependencies": {
+    "@chakra-ui/gatsby-plugin": "^3.1.3",
+    "@chakra-ui/react": "^2.6.1",
+    "@emotion/react": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
+    "framer-motion": "^10.12.16",
+    "gatsby": "^5.10.0",
+    "mapbox-gl": "^1.13.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/mapbox-gl": "^2.7.11",
+    "@types/node": "^18.16.13",
+    "@types/react": "^18.2.6",
+    "@types/react-dom": "^18.2.4",
+    "typescript": "^5.0.4"
+  }
+}
