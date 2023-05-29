@@ -1,24 +1,44 @@
-import { useEffect } from "react";
-import type { HeadFC, PageProps } from "gatsby";
+import { useEffect, useRef, useState } from "react";
+import { HeadFC, PageProps, Script } from "gatsby";
 import mapboxgl from "mapbox-gl";
 import React from "react";
 import { Box, Heading, VStack } from "@chakra-ui/react";
 import { Select } from "chakra-react-select";
+import { loadBingApi } from "../libs/bingMap";
+import { getGeojson } from "../request/getGeojson";
+import pivot_bedroom from "../content/pivot_bedroom.json";
+import us_zip from "../content/us_zip.json";
+import Map from "../component/Map";
 
+const w = window as any;
 const IndexPage: React.FC<PageProps> = () => {
-  mapboxgl.accessToken =
-    "pk.eyJ1IjoicHJhZHByYXQiLCJhIjoiY2tnMHhwbXZvMDc4eDJ1cXd1ZmFueHk5YiJ9.wfhci5Mpn6cahjx3GnOfYQ";
-  useEffect(() => {
-    const map = new mapboxgl.Map({
-      container: "mapbox", // container ID
-      // mapbox light
-      style: "mapbox://styles/mapbox/light-v10", // style URL
-      center: [-74.5, 40], // starting position [lng, lat]
-      zoom: 9, // starting zoom
+  const [map, setmap] = useState<mapboxgl.Map>();
+  const zipList = pivot_bedroom.map((item) => String(item.zipcode));
+  const filteredZipGeoJson = (us_zip as any).features.filter((item: any) => {
+    if (zipList.includes(item.properties.ZCTA5CE10)) {
+      console.log(item.properties.ZCTA5CE10);
+    }
+    return zipList.includes(item.properties.ZCTA5CE10);
+  });
+  map?.on("load", () => {
+    map?.addSource("zip", {
+      type: "geojson",
+      data: {
+        type: "FeatureCollection",
+        features: filteredZipGeoJson,
+      },
     });
-
-    return () => {};
-  }, []);
+    map?.addLayer({
+      id: "zip",
+      type: "fill",
+      source: "zip",
+      layout: {},
+      paint: {
+        "fill-color": "#088",
+        "fill-opacity": 0.8,
+      },
+    });
+  });
 
   return (
     <Box>
@@ -50,7 +70,7 @@ const IndexPage: React.FC<PageProps> = () => {
           ]}
         ></Select>
       </VStack>
-      <Box style={{ width: "100%", height: "100vh" }} id="mapbox"></Box>
+      <Map onInit={(map) => setmap(map)}></Map>
     </Box>
   );
 };
