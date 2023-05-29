@@ -10,7 +10,6 @@ import pivot_bedroom from "../content/pivot_bedroom.json";
 import us_zip from "../content/us_zip.json";
 import Map from "../component/Map";
 
-const w = window as any;
 const IndexPage: React.FC<PageProps> = () => {
   const [map, setmap] = useState<mapboxgl.Map>();
   const zipList = pivot_bedroom.map((item) => String(item.zipcode));
