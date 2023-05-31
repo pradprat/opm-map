@@ -9,16 +9,58 @@ import { getGeojson } from "../request/getGeojson";
 import pivot_bedroom from "../content/pivot_bedroom.json";
 import us_zip from "../content/us_zip.json";
 import Map from "../component/Map";
+import Legends from "../component/Legend";
+
+const legends = {
+  colors: ["purple", "red", "blue", "green"],
+  min: 0,
+  max: 20000,
+};
 
 const IndexPage: React.FC<PageProps> = () => {
   const [map, setmap] = useState<mapboxgl.Map>();
   const zipList = pivot_bedroom.map((item) => String(item.zipcode));
   const filteredZipGeoJson = (us_zip as any).features.filter((item: any) => {
     if (zipList.includes(item.properties.ZCTA5CE10)) {
-      console.log(item.properties.ZCTA5CE10);
     }
     return zipList.includes(item.properties.ZCTA5CE10);
   });
+  // join filteredZipGeoJson with pivot_bedroom
+  filteredZipGeoJson.forEach((item: any) => {
+    const zip = item.properties.ZCTA5CE10;
+    const pivotItem = pivot_bedroom.find((i) => String(i.zipcode) === zip);
+    item.properties = {
+      ...item.properties,
+      ...pivotItem,
+    };
+  });
+  filteredZipGeoJson.forEach((item: any) => {
+    Object.keys(item.properties).forEach((key) => {
+      if (isNaN(item.properties[key])) {
+        // format $###,###,### to number
+        try {
+          item.properties["number_" + key] = Number(
+            item.properties[key]?.replace(/[^0-9.-]+/g, "")
+          );
+        } catch (error) {
+          
+        }
+        // add paint color property based on number
+        item.properties["color_" + key] = legends.colors.find(
+          (color, index) => {
+            const start = legends.min + (legends.max - legends.min) * index;
+            const end = start + (legends.max - legends.min);
+            return (
+              item.properties["number_" + key] >= start &&
+              item.properties["number_" + key] < end
+            );
+          }
+        );
+      }
+    });
+  });
+  console.log(filteredZipGeoJson);
+
   map?.on("load", () => {
     map?.addSource("zip", {
       type: "geojson",
@@ -33,12 +75,15 @@ const IndexPage: React.FC<PageProps> = () => {
       source: "zip",
       layout: {},
       paint: {
-        "fill-color": "#088",
+        // get color from feature's properties
+        // if color is null then use default color
+        "fill-color": ["coalesce", ["get", "color_avg"], "white"],
         "fill-opacity": 0.8,
       },
     });
   });
 
+  
   return (
     <Box>
       {/* filters */}
@@ -70,6 +115,11 @@ const IndexPage: React.FC<PageProps> = () => {
         ></Select>
       </VStack>
       <Map onInit={(map) => setmap(map)}></Map>
+      <Legends
+        colors={legends.colors}
+        min={legends.min}
+        max={legends.max}
+      ></Legends>
     </Box>
   );
 };
