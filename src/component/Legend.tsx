@@ -32,7 +32,7 @@ const Legends = (props: Props) => {
       position={"absolute"}
       right={0}
       bottom={0}
-      m={8}
+      m={4}
       p={4}
       background={"white"}
       borderRadius={"lg"}
