@@ -1,0 +1,61 @@
+export const getGeojson = (features: any[]) => {
+  return {
+    type: "FeatureCollection",
+    features: features,
+  };
+};
+
+export const geoJsonAddProperties = (
+  geojson: any,
+  data: any[],
+  featureId: string = "",
+) => {
+  const features = geojson.features.map((feature: any) => {
+    const properties = data.find(
+      (item: any) => String(item[featureId]) === String(feature.id)
+    );
+    return {
+      ...feature,
+      properties: {
+        ...feature.properties,
+        ...properties,
+      },
+    };
+  });
+  console.log(features);
+
+  return {
+    ...geojson,
+    features,
+  };
+};
+export const geoJsonAddFeatureId = (geojson: any, featureId: string) => {
+  const features = geojson.features.map((feature: any) => {
+    return {
+      ...feature,
+      id: feature.properties[featureId],
+    };
+  });
+  return {
+    ...geojson,
+    features,
+  };
+};
+export const filterGeojson = (
+  geojson: any,
+  data: any[],
+  geoJsonKey: string,
+  dataKey: string
+) => {
+  const features = geojson.features.filter((feature: any) => {
+    const properties = data.find(
+      (item: any) =>
+        String(item[dataKey]) === String(feature.properties[geoJsonKey])
+    );
+    return properties;
+  });
+  return {
+    ...geojson,
+    features,
+  };
+};
