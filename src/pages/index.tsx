@@ -28,8 +28,9 @@ import {
   filterGeojson,
   geoJsonAddFeatureId,
   geoJsonAddProperties,
+  getPointGeojson,
 } from "../utils/map";
-import { formatMoneyDataToNumber, getMaxValue } from "../utils/data";
+import { formatMoneyDataToNumber, getMinMaxValue } from "../utils/data";
 
 const legends = {
   colors: ["purple", "red", "blue", "green"],
@@ -43,62 +44,67 @@ const IndexPage: React.FC<PageProps> = () => {
   const [filters, setfilters] = useState({
     bedroom: "1",
   });
+  const [sliderData, setsliderData] = useState({
+    min: 0,
+    max: 0,
+    value: 0,
+  });
   const map = useRef<mapboxgl.Map>();
   const [zipGeojson, setzipGeojson] = useState();
-  // useEffect(() => {
-  //   if (map.current) {
-  //     (map.current.getSource("zip") as any)?.setData({
-  //       type: "FeatureCollection",
-  //       features: zipGeojson,
-  //     });
-  //   }
-  //   return () => {};
-  // }, [zipGeojson]);
-
+  const [pointGeojson, setpointGeojson] = useState();
   useEffect(() => {
     const zipGeojson = geoJsonAddFeatureId(us_zip, "ZCTA5CE10");
     const room_data = pivot_bedroom.map((item) => {
       return formatMoneyDataToNumber(item);
     });
+    const availableRoomData = room_data.filter(
+      (item) => item["num_avg__" + filters.bedroom] !== 0
+    );
     const filteredGeojson = filterGeojson(
       zipGeojson,
-      room_data,
+      availableRoomData,
       "ZCTA5CE10",
       "zipcode"
     );
     const addedDataGeojson = geoJsonAddProperties(
       filteredGeojson,
-      room_data,
+      availableRoomData,
       "zipcode"
     );
-
-    // zipGeojson?.forEach((item: any) => {
-    //   if (isNaN(item.properties["avg__" + filters.bedroom])) {
-    //     // format $###,###,### to number
-    //     try {
-    //       item.properties["value"] = Number(
-    //         item.properties["avg__" + filters.bedroom]?.replace(
-    //           /[^0-9.-]+/g,
-    //           ""
-    //         )
-    //       );
-    //     } catch (error) {
-    //       console.log(error);
-    //     }
-    //     // add paint color property based on number
-    //     item.properties["color"] = legends.colors.find((color, index) => {
-    //       const start = legends.min + (legends.max - legends.min) * index;
-    //       const end = start + (legends.max - legends.min);
-    //       return (
-    //         item.properties["value"] >= start && item.properties["value"] < end
-    //       );
-    //     });
-    //   }
-    // });
+    const { min, max } = getMinMaxValue(
+      availableRoomData,
+      "num_avg__" + filters.bedroom
+    );
+    setsliderData({
+      min,
+      max,
+      value: min,
+    });
     setzipGeojson(addedDataGeojson);
-
+    const pointGeojson = getPointGeojson(addedDataGeojson);
+    setpointGeojson(pointGeojson);
     return () => {};
   }, [filters]);
+
+  useEffect(() => {
+    const filteredZipGeojson = (zipGeojson as any)?.features.filter(
+      (item: any) =>
+        item.properties["num_avg__" + filters.bedroom] > sliderData.value
+    );
+    const filteredPointGeojson = (pointGeojson as any)?.features.filter(
+      (item: any) =>
+        item.properties["num_avg__" + filters.bedroom] > sliderData.value
+    );
+    (map.current?.getSource("zip") as any)?.setData({
+      type: "FeatureCollection",
+      features: filteredZipGeojson,
+    });
+    (map.current?.getSource("zip-label") as any)?.setData({
+      type: "FeatureCollection",
+      features: filteredPointGeojson,
+    });
+    return () => {};
+  }, [sliderData]);
 
   const zipLayer = useMemo(
     () => ({
@@ -110,16 +116,14 @@ const IndexPage: React.FC<PageProps> = () => {
         "fill-color": [
           "interpolate",
           // Set the exponential rate of change to 0.5
-          ["exponential", 0.5],
+          ["exponential", 1],
           ["get", "num_avg__" + filters.bedroom],
           // When zoom is 15, buildings will be beige.
-          20000,
-          "red",
 
-          30000,
-          "yellow",
-          // When zoom is 18 or higher, buildings will be yellow.
-          51088,
+          sliderData.min / 2,
+          "white",
+
+          sliderData.max,
           "green",
         ],
         "fill-opacity": [
@@ -128,6 +132,31 @@ const IndexPage: React.FC<PageProps> = () => {
           1,
           0.5,
         ],
+      },
+    }),
+    [filters, sliderData]
+  );
+  const labelLayer = useMemo(
+    () => ({
+      id: "zip-labels",
+      type: "symbol",
+      source: "zip-label",
+      layout: {
+        "text-field": [
+          "format",
+          ["get", "zipcode"],
+          { "font-scale": 1.2 },
+          "\n",
+          {},
+          ["get", "avg__" + filters.bedroom],
+          {
+            "font-scale": 0.8,
+          },
+        ],
+        "text-variable-anchor": ["top", "bottom", "left", "right"],
+        "text-radial-offset": 0.5,
+        "text-justify": "auto",
+        "icon-image": ["get", "icon"],
       },
     }),
     [filters]
@@ -152,9 +181,23 @@ const IndexPage: React.FC<PageProps> = () => {
           setfilters={setfilters}
           filters={filters}
         ></BedroomFilter>
-        <Slider aria-label="slider-ex-4" defaultValue={30}>
-          <SliderMark value={25} mt="1" ml="-2.5" fontSize="sm">
-            25%
+        <Slider
+          aria-label="slider-ex-4"
+          value={sliderData.value}
+          onChange={(value) =>
+            setsliderData({ ...sliderData, value: value as number })
+          }
+          min={sliderData.min}
+          max={sliderData.max}
+        >
+          <SliderMark
+            value={sliderData.value}
+            textAlign="center"
+            color="black"
+            mt="-8"
+            fontSize={"xs"}
+          >
+            {sliderData.value}
           </SliderMark>
           <SliderTrack bg="red.100">
             <SliderFilledTrack bg="tomato" />
@@ -163,21 +206,6 @@ const IndexPage: React.FC<PageProps> = () => {
             <Box color="tomato" as={MdAttachMoney} />
           </SliderThumb>
         </Slider>
-
-        {/* <Select
-          useBasicStyles
-          options={[
-            {
-              label: "I am red",
-              value: "i-am-red",
-              colorScheme: "red", // The option color scheme overrides the global
-            },
-            {
-              label: "I fallback to purple",
-              value: "i-am-purple",
-            },
-          ]}
-        ></Select> */}
       </VStack>
       <Map
         ref={(ref) => (map.current = ref?.getMap() as any)}
@@ -193,12 +221,10 @@ const IndexPage: React.FC<PageProps> = () => {
           <Layer {...(zipLayer as any)}></Layer>
           <Hover sourceId="zip" layerId="zip"></Hover>
         </Source>
+        <Source id="zip-label" type="geojson" data={pointGeojson}>
+          <Layer {...(labelLayer as any)}></Layer>
+        </Source>
       </Map>
-      {/* <Legends
-        colors={legends.colors}
-        min={legends.min}
-        max={legends.max}
-      ></Legends> */}
     </Box>
   );
 };

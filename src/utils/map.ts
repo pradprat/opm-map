@@ -1,3 +1,4 @@
+import * as turf from "@turf/turf";
 export const getGeojson = (features: any[]) => {
   return {
     type: "FeatureCollection",
@@ -8,7 +9,7 @@ export const getGeojson = (features: any[]) => {
 export const geoJsonAddProperties = (
   geojson: any,
   data: any[],
-  featureId: string = "",
+  featureId: string = ""
 ) => {
   const features = geojson.features.map((feature: any) => {
     const properties = data.find(
@@ -53,6 +54,19 @@ export const filterGeojson = (
         String(item[dataKey]) === String(feature.properties[geoJsonKey])
     );
     return properties;
+  });
+  return {
+    ...geojson,
+    features,
+  };
+};
+export const getPointGeojson = (geojson: any) => {
+  const features = geojson.features.map((feature: any) => {
+    const feat = turf.feature(feature);
+    return {
+      ...feature,
+      geometry: turf.centerOfMass(feat.geometry).geometry,
+    };
   });
   return {
     ...geojson,

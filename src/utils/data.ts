@@ -1,5 +1,9 @@
-export const getMaxValue = (data: any[], key: string) => {
-  return Math.max(...data.map((item: any) => item[key]));
+export const getMinMaxValue = (data: any[], key: string) => {
+  const values = data.map((item) => item[key]);
+  return {
+    min: Math.min(...values),
+    max: Math.max(...values),
+  };
 };
 export const formatMoneyDataToNumber = (data: { [key: string]: any }) => {
   return Object.keys(data).reduce((acc: any, key: string) => {
