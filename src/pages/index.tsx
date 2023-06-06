@@ -12,6 +12,18 @@ import {
   HStack,
   Heading,
   Image,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  RangeSlider,
+  RangeSliderFilledTrack,
+  RangeSliderMark,
+  RangeSliderThumb,
+  RangeSliderTrack,
   Slider,
   SliderFilledTrack,
   SliderMark,
@@ -28,7 +40,11 @@ import Legends from "../component/Legend";
 import Map, { Layer, Marker, Source } from "react-map-gl";
 import Hover from "../component/Hover";
 import BedroomFilter from "../component/BedroomFilter";
-import { MdAttachMoney, MdOutlineChevronRight } from "react-icons/md";
+import {
+  MdAttachMoney,
+  MdGraphicEq,
+  MdOutlineChevronRight,
+} from "react-icons/md";
 import {
   filterGeojson,
   geoJsonAddFeatureId,
@@ -55,7 +71,7 @@ const IndexPage: React.FC<PageProps> = () => {
   const [sliderData, setsliderData] = useState({
     min: 0,
     max: 0,
-    value: 0,
+    value: [0, 0],
   });
   const map = useRef<mapboxgl.Map>();
   const [zipGeojson, setzipGeojson] = useState();
@@ -63,6 +79,7 @@ const IndexPage: React.FC<PageProps> = () => {
   const [pointGeojson, setpointGeojson] = useState();
   const [zipSelected, setzipSelected] = useState("");
   const [bedroomList, setbedroomList] = useState([]);
+  const [selectedBedroom, setselectedBedroom] = useState<any>({});
 
   useEffect(() => {
     const zipGeojson = geoJsonAddFeatureId(us_zip, "ZCTA5CE10");
@@ -90,7 +107,7 @@ const IndexPage: React.FC<PageProps> = () => {
     setsliderData({
       min,
       max,
-      value: min,
+      value: [min, max],
     });
     setzipGeojson(addedDataGeojson);
     const pointGeojson = getPointGeojson(addedDataGeojson);
@@ -107,11 +124,13 @@ const IndexPage: React.FC<PageProps> = () => {
   useEffect(() => {
     const filteredZipGeojson = (zipGeojson as any)?.features.filter(
       (item: any) =>
-        item.properties["num_avg__" + filters.bedroom] > sliderData.value
+        item.properties["num_avg__" + filters.bedroom] > sliderData.value[0] &&
+        item.properties["num_avg__" + filters.bedroom] < sliderData.value[1]
     );
     const filteredPointGeojson = (pointGeojson as any)?.features.filter(
       (item: any) =>
-        item.properties["num_avg__" + filters.bedroom] > sliderData.value
+        item.properties["num_avg__" + filters.bedroom] > sliderData.value[0] &&
+        item.properties["num_avg__" + filters.bedroom] < sliderData.value[1]
     );
     (map.current?.getSource("zip") as any)?.setData({
       type: "FeatureCollection",
@@ -252,7 +271,12 @@ const IndexPage: React.FC<PageProps> = () => {
             }
           >
             <BreadcrumbItem>
-              <Button variant={"link"} onClick={() => setzipSelected("")}>
+              <Button
+                variant={"link"}
+                onClick={() => setzipSelected("")}
+                color={"black"}
+                _hover={{ textDecoration: "none" }}
+              >
                 <Heading size={"md"}>Phoenix</Heading>
               </Button>
             </BreadcrumbItem>
@@ -263,37 +287,41 @@ const IndexPage: React.FC<PageProps> = () => {
             )}
           </Breadcrumb>
         </Box>
-        <VStack bg={"white"} p={4} shadow={"lg"} borderRadius={"lg"}>
+        <VStack
+          bg={"white"}
+          p={4}
+          shadow={"lg"}
+          borderRadius={"lg"}
+          alignItems={"start"}
+          gap={4}
+        >
           <Heading size={"md"}>Filter</Heading>
           <BedroomFilter
             setfilters={setfilters}
             filters={filters}
           ></BedroomFilter>
-          <Slider
-            aria-label="slider-ex-4"
-            value={sliderData.value}
-            onChange={(value) =>
-              setsliderData({ ...sliderData, value: value as number })
-            }
-            min={sliderData.min}
-            max={sliderData.max}
-          >
-            <SliderMark
+          <VStack w={"full"} alignItems={"start"}>
+            <Heading size={"md"}>Revenue</Heading>
+            <RangeSlider
+              aria-label={["min", "max"]}
               value={sliderData.value}
-              textAlign="center"
-              color="black"
-              mt="-8"
-              fontSize={"xs"}
+              onChange={(value) => {
+                setsliderData({ ...sliderData, value: value as number[] });
+              }}
+              min={sliderData.min}
+              max={sliderData.max}
             >
-              {sliderData.value}
-            </SliderMark>
-            <SliderTrack bg="red.100">
-              <SliderFilledTrack bg="tomato" />
-            </SliderTrack>
-            <SliderThumb boxSize={6} border={"1px"} borderColor={"tomato"}>
-              <Box color="tomato" as={MdAttachMoney} />
-            </SliderThumb>
-          </Slider>
+              <RangeSliderTrack>
+                <RangeSliderFilledTrack />
+              </RangeSliderTrack>
+              <RangeSliderThumb boxSize={6} index={0}>
+                <Box as={MdAttachMoney} />
+              </RangeSliderThumb>
+              <RangeSliderThumb boxSize={6} index={1}>
+                <Box as={MdAttachMoney} />
+              </RangeSliderThumb>
+            </RangeSlider>
+          </VStack>
         </VStack>
       </VStack>
       <Map
@@ -326,6 +354,9 @@ const IndexPage: React.FC<PageProps> = () => {
             longitude={item.longitude}
             latitude={item.latitude}
             anchor="bottom"
+            onClick={() => {
+              setselectedBedroom(item);
+            }}
           >
             <VStack maxW={48} gap={0}>
               <Image
@@ -340,6 +371,27 @@ const IndexPage: React.FC<PageProps> = () => {
           </Marker>
         ))}
       </Map>
+      <Modal
+        isOpen={selectedBedroom.title}
+        onClose={() => setselectedBedroom({})}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>{selectedBedroom.title}</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Image
+              src={selectedBedroom.img_cover}
+              borderRadius={"md"}
+              mb={4}
+              height={300}
+              width={"full"}
+              fallbackSrc="https://via.placeholder.com/300"
+              objectFit={"cover"}
+            ></Image>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 };
