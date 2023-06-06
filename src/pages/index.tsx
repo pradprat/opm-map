@@ -200,15 +200,25 @@ const IndexPage: React.FC<PageProps> = () => {
     const zipFeature = (zipGeojson as any).features.find(
       (item: any) => item.properties.zipcode === zip
     );
-    const bounds = turf.bbox(zipFeature);
+    const bounds = turf.bbox(zipFeature) as any;
     map.current?.fitBounds(bounds, {
       padding: 20,
     });
   };
 
+  const zoomOut = () => {
+    if (zipGeojson) {
+      const bounds = turf.bbox(zipGeojson) as any;
+      map.current?.fitBounds(bounds, {
+        padding: 20,
+      });
+    }
+  };
+
   useEffect(() => {
     if (zipSelected === "" || zipSelected === undefined) {
       setbedroomList([]);
+      zoomOut();
       return;
     }
     zoomToZip(zipSelected);
