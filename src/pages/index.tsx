@@ -180,7 +180,7 @@ const IndexPage: React.FC<PageProps> = () => {
       source: "zip",
       layout: {},
       paint: {
-        "line-color": "#000",
+        "line-color": "#ADADAD",
         "line-width": 1,
       },
     }),
@@ -358,16 +358,17 @@ const IndexPage: React.FC<PageProps> = () => {
               setselectedBedroom(item);
             }}
           >
-            <VStack maxW={48} gap={0}>
-              <Image
-                height={16}
-                width={16}
-                src="https://docs.mapbox.com/help/demos/custom-markers-gl-js/mapbox-icon.png"
-              />
-              <Heading textAlign={"center"} size={"sm"} mt={-8}>
-                {item.title || ""}
-              </Heading>
-            </VStack>
+            <Box
+              w={8}
+              h={8}
+              borderRadius={"full"}
+              shadow={"lg"}
+              background={"teal.500"}
+              _hover={{ transform: "scale(1.2)" }}
+              transition={"all 0.2s"}
+              border={"4px solid white"}
+              position={"relative"}
+            ></Box>
           </Marker>
         ))}
       </Map>
