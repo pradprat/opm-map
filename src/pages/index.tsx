@@ -1,79 +1,79 @@
 import { useEffect, useRef, useState, useMemo } from "react";
-import { HeadFC, PageProps, Script } from "gatsby";
+import { HeadFC, Link, PageProps } from "gatsby";
 import mapboxgl from "mapbox-gl";
 import React from "react";
 import {
   Box,
   Breadcrumb,
   BreadcrumbItem,
-  BreadcrumbLink,
   Button,
-  ButtonProps,
+  Flex,
   HStack,
   Heading,
+  Icon,
+  IconButton,
   Image,
   Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
-  ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Popover,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverTrigger,
+  Portal,
   RangeSlider,
   RangeSliderFilledTrack,
-  RangeSliderMark,
   RangeSliderThumb,
   RangeSliderTrack,
-  Slider,
-  SliderFilledTrack,
-  SliderMark,
-  SliderThumb,
-  SliderTrack,
+  Tag,
+  TagLabel,
   VStack,
 } from "@chakra-ui/react";
-import { Select } from "chakra-react-select";
-import { loadBingApi } from "../libs/bingMap";
-import { getGeojson, getPostalCodesData } from "../request/getGeojson";
 import pivot_bedroom from "../content/pivot_bedroom.json";
 import us_zip from "../content/us_zip.json";
-import Legends from "../component/Legend";
 import Map, { Layer, Marker, Source } from "react-map-gl";
 import Hover from "../component/Hover";
 import BedroomFilter from "../component/BedroomFilter";
-import {
-  MdAttachMoney,
-  MdGraphicEq,
-  MdOutlineChevronRight,
-} from "react-icons/md";
+import { MdAttachMoney, MdOutlineChevronRight } from "react-icons/md";
 import {
   filterGeojson,
   geoJsonAddFeatureId,
   geoJsonAddProperties,
   getPointGeojson,
 } from "../utils/map";
-import { formatMoneyDataToNumber, getMinMaxValue } from "../utils/data";
+import { formatMoneyDataToNumber } from "../utils/data";
 import Click from "../component/Click";
 import raw_bedroom from "../content/raw_bedroom.json";
 import * as turf from "@turf/turf";
+import { FaBed } from "react-icons/fa";
+import {
+  getZipBorderLayer,
+  getZipLabelLayer,
+  getZipLayer,
+} from "../utils/layers";
+import { BEDROOM_COUNT, COLOR_SCENE } from "../constant";
+import { BiLinkExternal } from "react-icons/bi";
+import BedroomMarker from "../component/BedroomMarker";
 
-const legends = {
-  colors: ["purple", "red", "blue", "green"],
-  min: 0,
-  max: 20000,
-};
 mapboxgl.accessToken =
   "pk.eyJ1IjoicHJhZHByYXQiLCJhIjoiY2tnMHhwbXZvMDc4eDJ1cXd1ZmFueHk5YiJ9.wfhci5Mpn6cahjx3GnOfYQ";
 
 const IndexPage: React.FC<PageProps> = () => {
+  const map = useRef<mapboxgl.Map>();
+
+  // state
   const [filters, setfilters] = useState({
-    bedroom: "1",
+    bedroom: ["1"],
   });
   const [sliderData, setsliderData] = useState({
     min: 0,
     max: 0,
     value: [0, 0],
   });
-  const map = useRef<mapboxgl.Map>();
   const [zipGeojson, setzipGeojson] = useState();
   const [zipBorderGeojson, setzipBorderGeojson] = useState();
   const [pointGeojson, setpointGeojson] = useState();
@@ -81,14 +81,34 @@ const IndexPage: React.FC<PageProps> = () => {
   const [bedroomList, setbedroomList] = useState([]);
   const [selectedBedroom, setselectedBedroom] = useState<any>({});
 
+  // memo
+  const zipLayer = useMemo(
+    () =>
+      getZipLayer({
+        numBedroom: filters.bedroom[0],
+        min: sliderData.min,
+        max: sliderData.max,
+      }),
+    [filters, sliderData]
+  );
+  const zipBorderLayer = useMemo(() => getZipBorderLayer(), []);
+  const labelLayer = useMemo(
+    () => getZipLabelLayer({ numBedroom: filters.bedroom[0] }),
+    [filters]
+  );
+
   useEffect(() => {
     const zipGeojson = geoJsonAddFeatureId(us_zip, "ZCTA5CE10");
     const room_data = pivot_bedroom.map((item) => {
       return formatMoneyDataToNumber(item);
     });
-    const availableRoomData = room_data.filter(
-      (item) => item["num_avg__" + filters.bedroom] !== 0
-    );
+    const availableRoomData = room_data.filter((item) => {
+      return filters.bedroom
+        .map((bedroom) => {
+          return item["num_avg__" + bedroom] !== 0;
+        })
+        .reduce((a, b) => a || b);
+    });
     const filteredGeojson = filterGeojson(
       zipGeojson,
       availableRoomData,
@@ -100,14 +120,17 @@ const IndexPage: React.FC<PageProps> = () => {
       availableRoomData,
       "zipcode"
     );
-    const { min, max } = getMinMaxValue(
-      availableRoomData,
-      "num_avg__" + filters.bedroom
-    );
-    setsliderData({
-      min,
-      max,
-      value: [min, max],
+    filters.bedroom.forEach((bedroom) => {
+      const bedroomData = availableRoomData.map((item) => {
+        return item["num_avg__" + bedroom];
+      });
+      const min = Math.min(...bedroomData);
+      const max = Math.max(...bedroomData);
+      setsliderData({
+        min,
+        max,
+        value: [min, max],
+      });
     });
     setzipGeojson(addedDataGeojson);
     const pointGeojson = getPointGeojson(addedDataGeojson);
@@ -124,13 +147,15 @@ const IndexPage: React.FC<PageProps> = () => {
   useEffect(() => {
     const filteredZipGeojson = (zipGeojson as any)?.features.filter(
       (item: any) =>
-        item.properties["num_avg__" + filters.bedroom] > sliderData.value[0] &&
-        item.properties["num_avg__" + filters.bedroom] < sliderData.value[1]
+        item.properties["num_avg__" + filters.bedroom[0]] >
+          sliderData.value[0] &&
+        item.properties["num_avg__" + filters.bedroom[0]] < sliderData.value[1]
     );
     const filteredPointGeojson = (pointGeojson as any)?.features.filter(
       (item: any) =>
-        item.properties["num_avg__" + filters.bedroom] > sliderData.value[0] &&
-        item.properties["num_avg__" + filters.bedroom] < sliderData.value[1]
+        item.properties["num_avg__" + filters.bedroom[0]] >
+          sliderData.value[0] &&
+        item.properties["num_avg__" + filters.bedroom[0]] < sliderData.value[1]
     );
     (map.current?.getSource("zip") as any)?.setData({
       type: "FeatureCollection",
@@ -142,75 +167,6 @@ const IndexPage: React.FC<PageProps> = () => {
     });
     return () => {};
   }, [sliderData]);
-
-  const zipLayer = useMemo(
-    () => ({
-      id: "zip",
-      type: "fill",
-      source: "zip",
-      layout: {},
-      paint: {
-        "fill-color": [
-          "interpolate",
-          // Set the exponential rate of change to 0.5
-          ["exponential", 1],
-          ["get", "num_avg__" + filters.bedroom],
-          // When zoom is 15, buildings will be beige.
-
-          sliderData.min / 2,
-          "white",
-
-          sliderData.max,
-          "green",
-        ],
-        "fill-opacity": [
-          "case",
-          ["boolean", ["feature-state", "hover"], false],
-          1,
-          0.5,
-        ],
-      },
-    }),
-    [filters, sliderData]
-  );
-  const zipBorderLayer = useMemo(
-    () => ({
-      id: "zip-border",
-      type: "line",
-      source: "zip",
-      layout: {},
-      paint: {
-        "line-color": "#ADADAD",
-        "line-width": 1,
-      },
-    }),
-    []
-  );
-  const labelLayer = useMemo(
-    () => ({
-      id: "zip-labels",
-      type: "symbol",
-      source: "zip-label",
-      layout: {
-        "text-field": [
-          "format",
-          ["get", "zipcode"],
-          { "font-scale": 1.2 },
-          "\n",
-          {},
-          ["get", "avg__" + filters.bedroom],
-          {
-            "font-scale": 0.8,
-          },
-        ],
-        "text-variable-anchor": ["top", "bottom", "left", "right"],
-        "text-radial-offset": 0.5,
-        "text-justify": "auto",
-        "icon-image": ["get", "icon"],
-      },
-    }),
-    [filters]
-  );
 
   const zoomToZip = (zip: string) => {
     if (zipGeojson === undefined || zipGeojson === "") {
@@ -240,13 +196,23 @@ const IndexPage: React.FC<PageProps> = () => {
       zoomOut();
       return;
     }
-    zoomToZip(zipSelected);
     const bedroooms = (raw_bedroom as any).filter(
       (item: any) =>
         item["regions/zipcode_ids/0"] === zipSelected &&
-        String(item["bedrooms"]) === String(filters.bedroom)
+        filters.bedroom.includes(String(item["bedrooms"]))
     );
-    setbedroomList(bedroooms);
+    const coloredBedrooms = bedroooms.map((item: any) => {
+      const bedIndex = filters.bedroom.indexOf(String(item["bedrooms"]));
+      const color = COLOR_SCENE[bedIndex];
+      return {
+        ...item,
+        color,
+      };
+    });
+    setbedroomList(coloredBedrooms);
+    setTimeout(() => {
+      zoomToZip(zipSelected);
+    }, 500);
     return () => {};
   }, [zipSelected, filters]);
 
@@ -295,10 +261,12 @@ const IndexPage: React.FC<PageProps> = () => {
           alignItems={"start"}
           gap={4}
         >
-          <Heading size={"md"}>Filter</Heading>
           <BedroomFilter
             setfilters={setfilters}
             filters={filters}
+            allowMultiple={zipSelected !== ""}
+            colorScene={COLOR_SCENE}
+            bedroomCount={BEDROOM_COUNT}
           ></BedroomFilter>
           <VStack w={"full"} alignItems={"start"}>
             <Heading size={"md"}>Revenue</Heading>
@@ -354,21 +322,8 @@ const IndexPage: React.FC<PageProps> = () => {
             longitude={item.longitude}
             latitude={item.latitude}
             anchor="bottom"
-            onClick={() => {
-              setselectedBedroom(item);
-            }}
           >
-            <Box
-              w={8}
-              h={8}
-              borderRadius={"full"}
-              shadow={"lg"}
-              background={"teal.500"}
-              _hover={{ transform: "scale(1.2)" }}
-              transition={"all 0.2s"}
-              border={"4px solid white"}
-              position={"relative"}
-            ></Box>
+            <BedroomMarker item={item}></BedroomMarker>
           </Marker>
         ))}
       </Map>
