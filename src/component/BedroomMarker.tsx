@@ -40,7 +40,7 @@ interface Props {
 
 const BedroomMarker = (props: Props) => {
   return (
-    <Popover isLazy>
+    <Popover isLazy placement="top">
       <PopoverTrigger>
         <Box
           w={8}

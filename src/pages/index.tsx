@@ -13,6 +13,10 @@ import {
   Icon,
   IconButton,
   Image,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  InputRightElement,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -27,11 +31,16 @@ import {
   Portal,
   RangeSlider,
   RangeSliderFilledTrack,
+  RangeSliderMark,
   RangeSliderThumb,
   RangeSliderTrack,
+  SliderMark,
   Tag,
   TagLabel,
+  Text,
   VStack,
+  useBreakpoint,
+  useMediaQuery,
 } from "@chakra-ui/react";
 import pivot_bedroom from "../content/pivot_bedroom.json";
 import us_zip from "../content/us_zip.json";
@@ -58,12 +67,25 @@ import {
 import { BEDROOM_COUNT, COLOR_SCENE } from "../constant";
 import { BiLinkExternal } from "react-icons/bi";
 import BedroomMarker from "../component/BedroomMarker";
+import Sidebar from "../component/Sidebar";
 
 mapboxgl.accessToken =
   "pk.eyJ1IjoicHJhZHByYXQiLCJhIjoiY2tnMHhwbXZvMDc4eDJ1cXd1ZmFueHk5YiJ9.wfhci5Mpn6cahjx3GnOfYQ";
 
 const IndexPage: React.FC<PageProps> = () => {
+  const breakpoint = useBreakpoint({ ssr: false });
+  const [isOnMobile] = useMediaQuery("(min-width: 30em)");
+
   const map = useRef<mapboxgl.Map>();
+
+  const resizeMap = () => {
+    map.current?.resize();
+  };
+  useEffect(() => {
+    resizeMap();
+
+    return () => {};
+  }, [isOnMobile]);
 
   // state
   const [filters, setfilters] = useState({
@@ -217,138 +239,200 @@ const IndexPage: React.FC<PageProps> = () => {
   }, [zipSelected, filters]);
 
   return (
-    <Box>
-      {/* filters */}
-      <VStack
-        position={"absolute"}
-        zIndex={1}
-        m={4}
-        alignItems={"flex-start"}
-        gap={2}
-        minWidth={"200px"}
-      >
-        <Box bg={"white"} p={4} shadow={"lg"} borderRadius={"lg"}>
-          <Breadcrumb
-            spacing="8px"
-            separator={
-              <Heading size={"md"}>
-                <MdOutlineChevronRight color="gray.500" />
-              </Heading>
-            }
-          >
-            <BreadcrumbItem>
-              <Button
-                variant={"link"}
-                onClick={() => setzipSelected("")}
-                color={"black"}
-                _hover={{ textDecoration: "none" }}
-              >
-                <Heading size={"md"}>Phoenix</Heading>
-              </Button>
-            </BreadcrumbItem>
-            {zipSelected && (
-              <BreadcrumbItem>
-                <Heading size={"md"}>{zipSelected}</Heading>
-              </BreadcrumbItem>
-            )}
-          </Breadcrumb>
+    <Flex>
+      {isOnMobile && (
+        <Box w={336}>
+          <Sidebar></Sidebar>
         </Box>
+      )}
+      <Box w="100%" h="100vh" flex={1}>
         <VStack
-          bg={"white"}
-          p={4}
-          shadow={"lg"}
-          borderRadius={"lg"}
-          alignItems={"start"}
-          gap={4}
+          position={"absolute"}
+          zIndex={1}
+          m={4}
+          alignItems={"flex-start"}
+          gap={2}
+          minWidth={"200px"}
         >
-          <BedroomFilter
-            setfilters={setfilters}
-            filters={filters}
-            allowMultiple={zipSelected !== ""}
-            colorScene={COLOR_SCENE}
-            bedroomCount={BEDROOM_COUNT}
-          ></BedroomFilter>
-          <VStack w={"full"} alignItems={"start"}>
-            <Heading size={"md"}>Revenue</Heading>
-            <RangeSlider
-              aria-label={["min", "max"]}
-              value={sliderData.value}
-              onChange={(value) => {
-                setsliderData({ ...sliderData, value: value as number[] });
-              }}
-              min={sliderData.min}
-              max={sliderData.max}
+          <Box bg={"white"} p={4} shadow={"lg"} borderRadius={"lg"}>
+            <Breadcrumb
+              spacing="8px"
+              separator={
+                <Heading size={"md"}>
+                  <MdOutlineChevronRight color="gray.500" />
+                </Heading>
+              }
             >
-              <RangeSliderTrack>
-                <RangeSliderFilledTrack />
-              </RangeSliderTrack>
-              <RangeSliderThumb boxSize={6} index={0}>
-                <Box as={MdAttachMoney} />
-              </RangeSliderThumb>
-              <RangeSliderThumb boxSize={6} index={1}>
-                <Box as={MdAttachMoney} />
-              </RangeSliderThumb>
-            </RangeSlider>
+              <BreadcrumbItem>
+                <Button
+                  variant={"link"}
+                  onClick={() => setzipSelected("")}
+                  color={"black"}
+                  _hover={{ textDecoration: "none" }}
+                >
+                  <Heading size={"md"}>Phoenix</Heading>
+                </Button>
+              </BreadcrumbItem>
+              {zipSelected && (
+                <BreadcrumbItem>
+                  <Heading size={"md"}>{zipSelected}</Heading>
+                </BreadcrumbItem>
+              )}
+            </Breadcrumb>
+          </Box>
+          <VStack
+            bg={"white"}
+            p={4}
+            shadow={"lg"}
+            borderRadius={"lg"}
+            alignItems={"start"}
+            gap={4}
+          >
+            <BedroomFilter
+              setfilters={setfilters}
+              filters={filters}
+              allowMultiple={zipSelected !== ""}
+              colorScene={COLOR_SCENE}
+              bedroomCount={BEDROOM_COUNT}
+            ></BedroomFilter>
+            <VStack w={"full"} alignItems={"start"}>
+              <Heading size={"md"}>Revenue</Heading>
+              <Box px={4} w={"full"}>
+                <RangeSlider
+                  aria-label={["min", "max"]}
+                  value={sliderData.value}
+                  onChange={(value) => {
+                    setsliderData({ ...sliderData, value: value as number[] });
+                  }}
+                  min={sliderData.min}
+                  max={sliderData.max}
+                >
+                  <RangeSliderMark
+                    value={sliderData.min || 0}
+                    mt="2.5"
+                    ml="-3"
+                    fontWeight={"bold"}
+                    fontSize="sm"
+                  >
+                    {new Intl.NumberFormat("en-US", {
+                      style: "currency",
+                      currency: "USD",
+                      notation: "compact",
+                    }).format(sliderData.min)}
+                  </RangeSliderMark>
+                  <RangeSliderMark
+                    value={sliderData.max || 0}
+                    mt="2.5"
+                    ml="-3"
+                    fontWeight={"bold"}
+                    fontSize="sm"
+                  >
+                    {new Intl.NumberFormat("en-US", {
+                      style: "currency",
+                      currency: "USD",
+                      notation: "compact",
+                    }).format(sliderData.max)}
+                  </RangeSliderMark>
+                  <RangeSliderTrack>
+                    <RangeSliderFilledTrack />
+                  </RangeSliderTrack>
+                  <RangeSliderThumb boxSize={6} index={0}>
+                    <Box as={MdAttachMoney} />
+                  </RangeSliderThumb>
+                  <RangeSliderThumb boxSize={6} index={1}>
+                    <Box as={MdAttachMoney} />
+                  </RangeSliderThumb>
+                </RangeSlider>
+              </Box>
+            </VStack>
+            <VStack w={"full"} alignItems={"start"}>
+              <Heading size={"md"}>Revenue</Heading>
+              <Text>Min</Text>
+              <InputGroup>
+                <InputLeftElement
+                  pointerEvents="none"
+                  color="gray.300"
+                  fontSize="1.2em"
+                  children="$"
+                />
+                <Input placeholder="Enter amount" />
+              </InputGroup>
+              <Text>Max</Text>
+              <InputGroup>
+                <InputLeftElement
+                  pointerEvents="none"
+                  color="gray.300"
+                  fontSize="1.2em"
+                  children="$"
+                />
+                <Input placeholder="Enter amount" />
+              </InputGroup>
+            </VStack>
           </VStack>
         </VStack>
-      </VStack>
-      <Map
-        ref={(ref) => (map.current = ref?.getMap() as any)}
-        initialViewState={{
-          longitude: -112.06053,
-          latitude: 33.53343,
-          zoom: 10,
-        }}
-        style={{ width: "100%", height: "100vh" }}
-        mapStyle="mapbox://styles/mapbox/light-v10"
-      >
-        <Source id="zip-border" type="geojson" data={zipBorderGeojson}>
-          <Layer {...(zipBorderLayer as any)}></Layer>
-        </Source>
-        {!zipSelected && (
-          <Source id="zip" type="geojson" data={zipGeojson}>
-            <Layer {...(zipLayer as any)} beforeId="zip-border"></Layer>
-            <Hover sourceId="zip" layerId="zip"></Hover>
-            <Click sourceId="zip" layerId="zip" onClick={setOnClickZip}></Click>
+        <Map
+          ref={(ref) => (map.current = ref?.getMap() as any)}
+          initialViewState={{
+            longitude: -112.06053,
+            latitude: 33.53343,
+            zoom: 10,
+          }}
+          style={{ width: "100%", height: "100vh" }}
+          mapStyle="mapbox://styles/mapbox/light-v10"
+        >
+          <Source id="zip-border" type="geojson" data={zipBorderGeojson}>
+            <Layer {...(zipBorderLayer as any)}></Layer>
           </Source>
-        )}
-        {!zipSelected && (
-          <Source id="zip-label" type="geojson" data={pointGeojson}>
-            <Layer {...(labelLayer as any)}></Layer>
-          </Source>
-        )}
-        {bedroomList.map((item: any) => (
-          <Marker
-            longitude={item.longitude}
-            latitude={item.latitude}
-            anchor="bottom"
-          >
-            <BedroomMarker item={item}></BedroomMarker>
-          </Marker>
-        ))}
-      </Map>
-      <Modal
-        isOpen={selectedBedroom.title}
-        onClose={() => setselectedBedroom({})}
-      >
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>{selectedBedroom.title}</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Image
-              src={selectedBedroom.img_cover}
-              borderRadius={"md"}
-              mb={4}
-              height={300}
-              width={"full"}
-              fallbackSrc="https://via.placeholder.com/300"
-              objectFit={"cover"}
-            ></Image>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
-    </Box>
+          {!zipSelected && (
+            <Source id="zip" type="geojson" data={zipGeojson}>
+              <Layer {...(zipLayer as any)} beforeId="zip-border"></Layer>
+              <Hover sourceId="zip" layerId="zip"></Hover>
+              <Click
+                sourceId="zip"
+                layerId="zip"
+                onClick={setOnClickZip}
+              ></Click>
+            </Source>
+          )}
+          {!zipSelected && (
+            <Source id="zip-label" type="geojson" data={pointGeojson}>
+              <Layer {...(labelLayer as any)}></Layer>
+            </Source>
+          )}
+          {bedroomList.map((item: any) => (
+            <Marker
+              longitude={item.longitude}
+              latitude={item.latitude}
+              anchor="bottom"
+            >
+              <BedroomMarker item={item}></BedroomMarker>
+            </Marker>
+          ))}
+        </Map>
+        <Modal
+          isOpen={selectedBedroom.title}
+          onClose={() => setselectedBedroom({})}
+        >
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>{selectedBedroom.title}</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <Image
+                src={selectedBedroom.img_cover}
+                borderRadius={"md"}
+                mb={4}
+                height={300}
+                width={"full"}
+                fallbackSrc="https://via.placeholder.com/300"
+                objectFit={"cover"}
+              ></Image>
+            </ModalBody>
+          </ModalContent>
+        </Modal>
+      </Box>
+      {/* filters */}
+    </Flex>
   );
 };
 
