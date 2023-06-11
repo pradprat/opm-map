@@ -295,7 +295,7 @@ const IndexPage: React.FC<PageProps> = () => {
               colorScene={COLOR_SCENE}
               bedroomCount={BEDROOM_COUNT}
             ></BedroomFilter>
-            <VStack w={"full"} alignItems={"start"}>
+            <VStack w={"full"} alignItems={"start"} minWidth={240} pb={8}>
               <Heading size={"md"}>Revenue</Heading>
               <Box px={4} w={"full"}>
                 <RangeSlider
@@ -344,29 +344,6 @@ const IndexPage: React.FC<PageProps> = () => {
                   </RangeSliderThumb>
                 </RangeSlider>
               </Box>
-            </VStack>
-            <VStack w={"full"} alignItems={"start"}>
-              <Heading size={"md"}>Revenue</Heading>
-              <Text>Min</Text>
-              <InputGroup>
-                <InputLeftElement
-                  pointerEvents="none"
-                  color="gray.300"
-                  fontSize="1.2em"
-                  children="$"
-                />
-                <Input placeholder="Enter amount" />
-              </InputGroup>
-              <Text>Max</Text>
-              <InputGroup>
-                <InputLeftElement
-                  pointerEvents="none"
-                  color="gray.300"
-                  fontSize="1.2em"
-                  children="$"
-                />
-                <Input placeholder="Enter amount" />
-              </InputGroup>
             </VStack>
           </VStack>
         </VStack>

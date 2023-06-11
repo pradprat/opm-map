@@ -105,7 +105,8 @@
     "./src/**/*",
     "./gatsby-node.ts",
     "./gatsby-config.ts",
-    "./plugins/**/*"
+    "./plugins/**/*",
+    "./custom.d.ts"
   ],
   "types": ["bingmaps"]
 }
