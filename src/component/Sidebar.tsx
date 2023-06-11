@@ -13,7 +13,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import React from "react";
-import logo from "../assets/imgs/logo-small.svg";
+// import logo from "../assets/imgs/logo-small.svg";
 import { FaChartLine, FaMap, FaMapPin } from "react-icons/fa";
 
 interface Props {}
@@ -21,7 +21,11 @@ const Sidebar = (props: Props) => {
   return (
     <VStack alignItems={"start"} w={"full"}>
       <Box px={16} py={8}>
-        <Image src={logo.toString()}></Image>
+        <Image
+          src={
+            "https://ik.imagekit.io/nantidatangcdn/locationlab/logo-small_qzZ3clHsz.svg"
+          }
+        ></Image>
       </Box>
       <VStack alignItems={"start"} w={"full"}>
         <Accordion allowToggle w={"full"} defaultIndex={[0]} allowMultiple>
