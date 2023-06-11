@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useMemo } from "react";
-import { HeadFC, Link, PageProps } from "gatsby";
+import { HeadFC, PageProps } from "gatsby";
 import mapboxgl from "mapbox-gl";
 import React from "react";
 import {
@@ -8,39 +8,20 @@ import {
   BreadcrumbItem,
   Button,
   Flex,
-  HStack,
   Heading,
-  Icon,
-  IconButton,
   Image,
-  Input,
-  InputGroup,
-  InputLeftElement,
-  InputRightElement,
   Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
   ModalHeader,
   ModalOverlay,
-  Popover,
-  PopoverBody,
-  PopoverCloseButton,
-  PopoverContent,
-  PopoverTrigger,
-  Portal,
   RangeSlider,
   RangeSliderFilledTrack,
   RangeSliderMark,
   RangeSliderThumb,
   RangeSliderTrack,
-  SliderMark,
-  Tag,
-  TagLabel,
-  Text,
   VStack,
-  useBreakpoint,
-  useMediaQuery,
 } from "@chakra-ui/react";
 import pivot_bedroom from "../content/pivot_bedroom.json";
 import us_zip from "../content/us_zip.json";
@@ -58,14 +39,12 @@ import { formatMoneyDataToNumber } from "../utils/data";
 import Click from "../component/Click";
 import raw_bedroom from "../content/raw_bedroom.json";
 import * as turf from "@turf/turf";
-import { FaBed } from "react-icons/fa";
 import {
   getZipBorderLayer,
   getZipLabelLayer,
   getZipLayer,
 } from "../utils/layers";
 import { BEDROOM_COUNT, COLOR_SCENE } from "../constant";
-import { BiLinkExternal } from "react-icons/bi";
 import BedroomMarker from "../component/BedroomMarker";
 import Sidebar from "../component/Sidebar";
 
@@ -73,8 +52,8 @@ mapboxgl.accessToken =
   "pk.eyJ1IjoicHJhZHByYXQiLCJhIjoiY2tnMHhwbXZvMDc4eDJ1cXd1ZmFueHk5YiJ9.wfhci5Mpn6cahjx3GnOfYQ";
 
 const IndexPage: React.FC<PageProps> = () => {
-  const breakpoint = useBreakpoint({ ssr: false });
-  const [isOnMobile] = useMediaQuery("(min-width: 30em)");
+  // const breakpoint = useBreakpoint({ ssr: false });
+  // const [isOnMobile] = useMediaQuery("(min-width: 30em)");
   const map = useRef<mapboxgl.Map>();
 
   // state
@@ -209,10 +188,10 @@ const IndexPage: React.FC<PageProps> = () => {
     return () => {};
   }, [zipSelected, filters]);
 
-  useEffect(() => {
-    resizeMap();
-    return () => {};
-  }, [isOnMobile]);
+  // useEffect(() => {
+  //   resizeMap();
+  //   return () => {};
+  // }, [isOnMobile]);
 
   // function
   const resizeMap = () => {
@@ -248,11 +227,9 @@ const IndexPage: React.FC<PageProps> = () => {
 
   return (
     <Flex>
-      {isOnMobile && (
-        <Box w={336}>
-          <Sidebar></Sidebar>
-        </Box>
-      )}
+      <Box w={336}>
+        <Sidebar></Sidebar>
+      </Box>
       <Box w="100%" h="100vh" flex={1}>
         <VStack
           position={"absolute"}
