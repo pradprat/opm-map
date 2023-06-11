@@ -108,5 +108,4 @@
     "./plugins/**/*",
     "./custom.d.ts"
   ],
-  "types": ["bingmaps"]
 }
