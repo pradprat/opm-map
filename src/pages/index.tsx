@@ -75,17 +75,7 @@ mapboxgl.accessToken =
 const IndexPage: React.FC<PageProps> = () => {
   const breakpoint = useBreakpoint({ ssr: false });
   const [isOnMobile] = useMediaQuery("(min-width: 30em)");
-
   const map = useRef<mapboxgl.Map>();
-
-  const resizeMap = () => {
-    map.current?.resize();
-  };
-  useEffect(() => {
-    resizeMap();
-
-    return () => {};
-  }, [isOnMobile]);
 
   // state
   const [filters, setfilters] = useState({
@@ -118,7 +108,15 @@ const IndexPage: React.FC<PageProps> = () => {
     () => getZipLabelLayer({ numBedroom: filters.bedroom[0] }),
     [filters]
   );
+  const filteredBedroomList = useMemo(() => {
+    return bedroomList.filter((item: any) => {
+      return (
+        item.revenue > sliderData.value[0] && item.revenue < sliderData.value[1]
+      );
+    });
+  }, [sliderData.value, bedroomList]);
 
+  // effect
   useEffect(() => {
     const zipGeojson = geoJsonAddFeatureId(us_zip, "ZCTA5CE10");
     const room_data = pivot_bedroom.map((item) => {
@@ -161,11 +159,6 @@ const IndexPage: React.FC<PageProps> = () => {
     return () => {};
   }, [filters]);
 
-  const setOnClickZip = (e: any) => {
-    const zipcode = e.features[0].properties.zipcode;
-    setzipSelected(zipcode);
-  };
-
   useEffect(() => {
     const filteredZipGeojson = (zipGeojson as any)?.features.filter(
       (item: any) =>
@@ -189,28 +182,6 @@ const IndexPage: React.FC<PageProps> = () => {
     });
     return () => {};
   }, [sliderData]);
-
-  const zoomToZip = (zip: string) => {
-    if (zipGeojson === undefined || zipGeojson === "") {
-      return;
-    }
-    const zipFeature = (zipGeojson as any).features.find(
-      (item: any) => item.properties.zipcode === zip
-    );
-    const bounds = turf.bbox(zipFeature) as any;
-    map.current?.fitBounds(bounds, {
-      padding: 20,
-    });
-  };
-
-  const zoomOut = () => {
-    if (zipGeojson) {
-      const bounds = turf.bbox(zipGeojson) as any;
-      map.current?.fitBounds(bounds, {
-        padding: 20,
-      });
-    }
-  };
 
   useEffect(() => {
     if (zipSelected === "" || zipSelected === undefined) {
@@ -237,6 +208,43 @@ const IndexPage: React.FC<PageProps> = () => {
     }, 500);
     return () => {};
   }, [zipSelected, filters]);
+
+  useEffect(() => {
+    resizeMap();
+    return () => {};
+  }, [isOnMobile]);
+
+  // function
+  const resizeMap = () => {
+    map.current?.resize();
+  };
+
+  const zoomToZip = (zip: string) => {
+    if (zipGeojson === undefined || zipGeojson === "") {
+      return;
+    }
+    const zipFeature = (zipGeojson as any).features.find(
+      (item: any) => item.properties.zipcode === zip
+    );
+    const bounds = turf.bbox(zipFeature) as any;
+    map.current?.fitBounds(bounds, {
+      padding: 20,
+    });
+  };
+
+  const zoomOut = () => {
+    if (zipGeojson) {
+      const bounds = turf.bbox(zipGeojson) as any;
+      map.current?.fitBounds(bounds, {
+        padding: 20,
+      });
+    }
+  };
+
+  const setOnClickZip = (e: any) => {
+    const zipcode = e.features[0].properties.zipcode;
+    setzipSelected(zipcode);
+  };
 
   return (
     <Flex>
@@ -287,15 +295,19 @@ const IndexPage: React.FC<PageProps> = () => {
             borderRadius={"lg"}
             alignItems={"start"}
             gap={4}
+            minWidth={240}
           >
-            <BedroomFilter
-              setfilters={setfilters}
-              filters={filters}
-              allowMultiple={zipSelected !== ""}
-              colorScene={COLOR_SCENE}
-              bedroomCount={BEDROOM_COUNT}
-            ></BedroomFilter>
-            <VStack w={"full"} alignItems={"start"} minWidth={240} pb={8}>
+            <VStack w={"full"} alignItems={"start"}>
+              <Heading size={"md"}>Bedroom</Heading>
+              <BedroomFilter
+                setfilters={setfilters}
+                filters={filters}
+                allowMultiple={zipSelected !== ""}
+                colorScene={COLOR_SCENE}
+                bedroomCount={BEDROOM_COUNT}
+              ></BedroomFilter>
+            </VStack>
+            <VStack w={"full"} alignItems={"start"} pb={8}>
               <Heading size={"md"}>Revenue</Heading>
               <Box px={4} w={"full"}>
                 <RangeSlider
@@ -334,7 +346,7 @@ const IndexPage: React.FC<PageProps> = () => {
                     }).format(sliderData.max)}
                   </RangeSliderMark>
                   <RangeSliderTrack>
-                    <RangeSliderFilledTrack />
+                    <RangeSliderFilledTrack bg={COLOR_SCENE[0]} />
                   </RangeSliderTrack>
                   <RangeSliderThumb boxSize={6} index={0}>
                     <Box as={MdAttachMoney} />
@@ -376,7 +388,7 @@ const IndexPage: React.FC<PageProps> = () => {
               <Layer {...(labelLayer as any)}></Layer>
             </Source>
           )}
-          {bedroomList.map((item: any) => (
+          {filteredBedroomList.map((item: any) => (
             <Marker
               longitude={item.longitude}
               latitude={item.latitude}

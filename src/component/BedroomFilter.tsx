@@ -17,53 +17,51 @@ const selectedFilter = {
 const BedroomFilter = (props: Props) => {
   return (
     <VStack alignItems={"start"} w={"full"}>
-      <Heading size={"sm"}>Bedrooms</Heading>
-      <VStack alignItems={"start"} w={"full"}>
-        {props.bedroomCount?.map((item) => {
-          const index = props.filters.bedroom.indexOf(item);
-          return (
-            <Button
-              w={"full"}
-              key={item}
-              onClick={() => {
-                if (props.allowMultiple) {
-                  // toggle filter
-                  const ifExist = props.filters.bedroom.includes(item);
-                  if (ifExist && props.filters.bedroom.length > 1) {
-                    props.setfilters({
-                      ...props.filters,
-                      bedroom: props.filters.bedroom.filter(
-                        (i: string) => i !== item
-                      ),
-                    });
-                  }
-                  if (!ifExist) {
-                    props.setfilters({
-                      ...props.filters,
-                      bedroom: [...props.filters.bedroom, item],
-                    });
-                  }
-                } else {
+      {props.bedroomCount?.map((item) => {
+        const index = props.filters.bedroom.indexOf(item);
+        return (
+          <Button
+            size={"sm"}
+            w={"full"}
+            key={item}
+            onClick={() => {
+              if (props.allowMultiple) {
+                // toggle filter
+                const ifExist = props.filters.bedroom.includes(item);
+                if (ifExist && props.filters.bedroom.length > 1) {
                   props.setfilters({
                     ...props.filters,
-                    bedroom: [item],
+                    bedroom: props.filters.bedroom.filter(
+                      (i: string) => i !== item
+                    ),
                   });
                 }
-              }}
-              {...(props.filters.bedroom.includes(item) ? selectedFilter : {})}
-              bg={
-                props.filters.bedroom.includes(item)
-                  ? props.colorScene?.[index]
-                  : "gray.300"
+                if (!ifExist) {
+                  props.setfilters({
+                    ...props.filters,
+                    bedroom: [...props.filters.bedroom, item],
+                  });
+                }
+              } else {
+                props.setfilters({
+                  ...props.filters,
+                  bedroom: [item],
+                });
               }
-              textAlign={"left"}
-              justifyContent={"flex-start"}
-            >
-              {item} bedrooms
-            </Button>
-          );
-        })}
-      </VStack>
+            }}
+            {...(props.filters.bedroom.includes(item) ? selectedFilter : {})}
+            bg={
+              props.filters.bedroom.includes(item)
+                ? props.colorScene?.[index]
+                : "gray.300"
+            }
+            textAlign={"left"}
+            justifyContent={"flex-start"}
+          >
+            {item} bedrooms
+          </Button>
+        );
+      })}
     </VStack>
   );
 };

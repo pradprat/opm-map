@@ -1,3 +1,5 @@
+import { COLOR_SCENE } from "../constant";
+
 export const getZipLayer = ({ numBedroom, min, max }: any) => {
   return {
     id: "zip",
@@ -11,9 +13,8 @@ export const getZipLayer = ({ numBedroom, min, max }: any) => {
         ["get", "num_avg__" + numBedroom],
         min / 2,
         "white",
-
         max,
-        "green",
+        COLOR_SCENE[0],
       ],
       "fill-opacity": [
         "case",
