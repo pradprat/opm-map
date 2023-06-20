@@ -23,7 +23,8 @@ const Sidebar = (props: Props) => {
       <Box px={16} py={8}>
         <Image
           src={
-            "https://ik.imagekit.io/nantidatangcdn/locationlab/logo-small_qzZ3clHsz.svg"
+            // "https://ik.imagekit.io/nantidatangcdn/locationlab/logo-small_qzZ3clHsz.svg"
+            "https://ik.imagekit.io/nantidatangcdn/locationlab/logo-white_sUmKbA0uO.svg"
           }
         ></Image>
       </Box>
@@ -39,16 +40,19 @@ const Sidebar = (props: Props) => {
             <AccordionPanel
               px={4}
               py={2}
-              background={"#F6F6F4"}
               gap={4}
               display={"flex"}
               flexDir={"column"}
+              background={"#0F0019"}
             >
               <Button
                 variant={"ghost"}
                 w={"full"}
                 justifyContent={"start"}
                 leftIcon={<Icon as={FaMapPin}></Icon>}
+                color={"white"}
+                background={"#0F0019"}
+                _hover={{ background: "#0F0019" }}
               >
                 Map
               </Button>
@@ -57,6 +61,9 @@ const Sidebar = (props: Props) => {
                 w={"full"}
                 justifyContent={"start"}
                 leftIcon={<Icon as={FaChartLine}></Icon>}
+                color={"white"}
+                background={"#0F0019"}
+                _hover={{ background: "#0F0019" }}
               >
                 Charts
               </Button>

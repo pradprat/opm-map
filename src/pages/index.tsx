@@ -25,7 +25,7 @@ import {
 } from "@chakra-ui/react";
 import pivot_bedroom from "../content/pivot_bedroom.json";
 import us_zip from "../content/us_zip.json";
-import Map, { Layer, Marker, Source } from "react-map-gl";
+import Map, { Layer, Marker, NavigationControl, Source } from "react-map-gl";
 import Hover from "../component/Hover";
 import BedroomFilter from "../component/BedroomFilter";
 import { MdAttachMoney, MdOutlineChevronRight } from "react-icons/md";
@@ -227,7 +227,7 @@ const IndexPage: React.FC<PageProps> = () => {
 
   return (
     <Flex>
-      <Box w={336}>
+      <Box w={336} background={"#26023D"} color={"white"}>
         <Sidebar></Sidebar>
       </Box>
       <Box w="100%" h="100vh" flex={1}>
@@ -374,6 +374,7 @@ const IndexPage: React.FC<PageProps> = () => {
               <BedroomMarker item={item}></BedroomMarker>
             </Marker>
           ))}
+          <NavigationControl />
         </Map>
         <Modal
           isOpen={selectedBedroom.title}

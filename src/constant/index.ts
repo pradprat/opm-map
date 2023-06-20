@@ -1,5 +1,5 @@
 export const COLOR_SCENE = [
-  "#5D20D5",
+  "#26023D",
   "#F59F00",
   "#C82B34",
   "#367A95",
