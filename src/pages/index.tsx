@@ -52,7 +52,7 @@ mapboxgl.accessToken =
   "pk.eyJ1IjoicHJhZHByYXQiLCJhIjoiY2tnMHhwbXZvMDc4eDJ1cXd1ZmFueHk5YiJ9.wfhci5Mpn6cahjx3GnOfYQ";
 
 const IndexPage: React.FC<PageProps> = () => {
-  const [refreshMarker, setrefreshMarker] = useState(0)
+  const [refreshMarker, setrefreshMarker] = useState(0);
   // const breakpoint = useBreakpoint({ ssr: false });
   // const [isOnMobile] = useMediaQuery("(min-width: 30em)");
   const map = useRef<mapboxgl.Map>();
@@ -240,32 +240,6 @@ const IndexPage: React.FC<PageProps> = () => {
           gap={2}
           minWidth={"200px"}
         >
-          <Box bg={"white"} p={4} shadow={"lg"} borderRadius={"lg"}>
-            <Breadcrumb
-              spacing="8px"
-              separator={
-                <Heading size={"md"}>
-                  <MdOutlineChevronRight color="gray.500" />
-                </Heading>
-              }
-            >
-              <BreadcrumbItem>
-                <Button
-                  variant={"link"}
-                  onClick={() => setzipSelected("")}
-                  color={"black"}
-                  _hover={{ textDecoration: "none" }}
-                >
-                  <Heading size={"md"}>Phoenix</Heading>
-                </Button>
-              </BreadcrumbItem>
-              {zipSelected && (
-                <BreadcrumbItem>
-                  <Heading size={"md"}>{zipSelected}</Heading>
-                </BreadcrumbItem>
-              )}
-            </Breadcrumb>
-          </Box>
           <VStack
             bg={"white"}
             p={4}
@@ -336,6 +310,17 @@ const IndexPage: React.FC<PageProps> = () => {
               </Box>
             </VStack>
           </VStack>
+          <Box>
+            {zipSelected && (
+              <Button
+                onClick={() => setzipSelected("")}
+                bg={"white"}
+                shadow={"lg"}
+              >
+                Back to city view
+              </Button>
+            )}
+          </Box>
         </VStack>
         <Map
           ref={(ref) => (map.current = ref?.getMap() as any)}
@@ -346,8 +331,8 @@ const IndexPage: React.FC<PageProps> = () => {
           }}
           style={{ width: "100%", height: "100vh" }}
           mapStyle="mapbox://styles/mapbox/light-v10"
-          onIdle={(e)=>{
-            setrefreshMarker(e.target.getCenter().lat)
+          onIdle={(e) => {
+            setrefreshMarker(e.target.getCenter().lat);
           }}
         >
           <Source id="zip-border" type="geojson" data={zipBorderGeojson}>
@@ -375,7 +360,10 @@ const IndexPage: React.FC<PageProps> = () => {
               latitude={item.latitude}
               anchor="bottom"
             >
-              <BedroomMarker item={item} refreshValue={refreshMarker}></BedroomMarker>
+              <BedroomMarker
+                item={item}
+                refreshValue={refreshMarker}
+              ></BedroomMarker>
             </Marker>
           ))}
           <NavigationControl />
