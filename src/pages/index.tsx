@@ -52,6 +52,7 @@ mapboxgl.accessToken =
   "pk.eyJ1IjoicHJhZHByYXQiLCJhIjoiY2tnMHhwbXZvMDc4eDJ1cXd1ZmFueHk5YiJ9.wfhci5Mpn6cahjx3GnOfYQ";
 
 const IndexPage: React.FC<PageProps> = () => {
+  const [refreshMarker, setrefreshMarker] = useState(0)
   // const breakpoint = useBreakpoint({ ssr: false });
   // const [isOnMobile] = useMediaQuery("(min-width: 30em)");
   const map = useRef<mapboxgl.Map>();
@@ -345,6 +346,9 @@ const IndexPage: React.FC<PageProps> = () => {
           }}
           style={{ width: "100%", height: "100vh" }}
           mapStyle="mapbox://styles/mapbox/light-v10"
+          onIdle={(e)=>{
+            setrefreshMarker(e.target.getCenter().lat)
+          }}
         >
           <Source id="zip-border" type="geojson" data={zipBorderGeojson}>
             <Layer {...(zipBorderLayer as any)}></Layer>
@@ -371,7 +375,7 @@ const IndexPage: React.FC<PageProps> = () => {
               latitude={item.latitude}
               anchor="bottom"
             >
-              <BedroomMarker item={item}></BedroomMarker>
+              <BedroomMarker item={item} refreshValue={refreshMarker}></BedroomMarker>
             </Marker>
           ))}
           <NavigationControl />
