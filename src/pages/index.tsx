@@ -2,25 +2,23 @@ import { useEffect, useRef, useState, useMemo } from "react";
 import { HeadFC, PageProps } from "gatsby";
 import mapboxgl from "mapbox-gl";
 import React from "react";
-import {
-  Box,
-  Button,
-  Flex,
-  VStack,
-} from "@chakra-ui/react";
+import { Box, Button, Flex, VStack } from "@chakra-ui/react";
 import pivot_bedroom from "../content/pivot_bedroom.json";
 import us_zip from "../content/us_zip.json";
-import Map, { Marker, NavigationControl } from "react-map-gl";
+import Map, { LayerProps, Marker, NavigationControl } from "react-map-gl";
 import {
   filterGeojson,
   geoJsonAddFeatureId,
   geoJsonAddProperties,
+  geoJsonAddRandomFeatureId,
   getPointGeojson,
 } from "../utils/map";
 import { formatMoneyDataToNumber } from "../utils/data";
 import raw_bedroom from "../content/raw_bedroom.json";
+import az_geojson from "../data/geojson/us/cities/az/phoenix.json";
 import * as turf from "@turf/turf";
 import {
+  getGeneralLayer,
   getZipLabelLayer,
   getZipLayer,
 } from "../utils/layers";
@@ -29,7 +27,6 @@ import BedroomMarker from "../component/BedroomMarker";
 import Sidebar from "../component/Sidebar";
 import ComposedLayer from "../component/ComposedLayer";
 import Filters from "../component/Filters";
-
 mapboxgl.accessToken =
   "pk.eyJ1IjoicHJhZHByYXQiLCJhIjoiY2tnMHhwbXZvMDc4eDJ1cXd1ZmFueHk5YiJ9.wfhci5Mpn6cahjx3GnOfYQ";
 
@@ -238,6 +235,13 @@ const IndexPage: React.FC<PageProps> = () => {
             setrefreshMarker(e.target.getCenter().lat);
           }}
         >
+          {/* city */}
+          <ComposedLayer
+            id="state"
+            geojson={geoJsonAddRandomFeatureId(az_geojson)}
+            layerProps={getGeneralLayer()}
+            hoverEffect
+          ></ComposedLayer>
           {!zipSelected && (
             <>
               <ComposedLayer

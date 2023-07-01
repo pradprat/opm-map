@@ -1,4 +1,5 @@
 import * as turf from "@turf/turf";
+import * as uuid from 'uuid';
 export const getGeojson = (features: any[]) => {
   return {
     type: "FeatureCollection",
@@ -33,6 +34,18 @@ export const geoJsonAddFeatureId = (geojson: any, featureId: string) => {
     return {
       ...feature,
       id: feature.properties[featureId],
+    };
+  });
+  return {
+    ...geojson,
+    features,
+  };
+};
+export const geoJsonAddRandomFeatureId = (geojson: any) => {
+  const features = geojson.features.map((feature: any) => {
+    return {
+      ...feature,
+      id: new Date().getTime(),
     };
   });
   return {

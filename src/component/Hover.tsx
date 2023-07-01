@@ -6,12 +6,13 @@ interface Props {
   layerId: string;
   sourceId: string;
 }
-let hoveredPolygonId: any = null;
 
 const Hover = (props: Props) => {
+  let hoveredPolygonId: any = null;
   const { current: map } = useMap();
   useEffect(() => {
     map?.on("mousemove", props.layerId, (e: any) => {
+      console.log(e.features[0]);
       if (e.features.length > 0) {
         if (hoveredPolygonId !== null) {
           map.setFeatureState(
@@ -27,6 +28,12 @@ const Hover = (props: Props) => {
           );
         }
       }
+    });
+    map?.on("mouseleave", props.layerId, (e: any) => {
+      map.setFeatureState(
+        { source: props.sourceId, id: hoveredPolygonId },
+        { hover: false }
+      );
     });
 
     return () => {
@@ -46,6 +53,12 @@ const Hover = (props: Props) => {
             );
           }
         }
+      });
+      map?.off("mouseleave", props.layerId, (e: any) => {
+        map.setFeatureState(
+          { source: props.sourceId, id: hoveredPolygonId },
+          { hover: false }
+        );
       });
     };
   }, []);

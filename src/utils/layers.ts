@@ -1,10 +1,22 @@
 import { COLOR_SCENE } from "../constant";
-
+export const getGeneralLayer = () => {
+  return {
+    type: "fill",
+    layout: {},
+    paint: {
+      "fill-color": "blue",
+      "fill-opacity": [
+        "case",
+        ["boolean", ["feature-state", "hover"], false],
+        1,
+        0.5,
+      ],
+    },
+  };
+};
 export const getZipLayer = ({ numBedroom, min, max }: any) => {
   return {
-    id: "zip",
     type: "fill",
-    source: "zip",
     layout: {},
     paint: {
       "fill-color": [
@@ -27,9 +39,7 @@ export const getZipLayer = ({ numBedroom, min, max }: any) => {
 };
 export const getZipBorderLayer = () => {
   return {
-    id: "zip-border",
     type: "line",
-    source: "zip",
     layout: {},
     paint: {
       "line-color": "#ADADAD",
@@ -39,9 +49,7 @@ export const getZipBorderLayer = () => {
 };
 export const getZipLabelLayer = ({ numBedroom }: any) => {
   return {
-    id: "zip-labels",
     type: "symbol",
-    source: "zip-label",
     layout: {
       "text-field": [
         "format",

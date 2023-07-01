@@ -22,8 +22,15 @@ interface Props {
 const ComposedLayer = (props: Props) => {
   return (
     <Source id={props.id} type="geojson" data={props.geojson || ""}>
-      {props.layerProps && <Layer {...props.layerProps}></Layer>}
-      {props.hoverEffect && <Hover sourceId={props.id} layerId={props.id}></Hover>}
+      {props.layerProps && (
+        <Layer
+          id={props.id}
+          {...props.layerProps}
+        ></Layer>
+      )}
+      {props.hoverEffect && (
+        <Hover sourceId={props.id} layerId={props.id}></Hover>
+      )}
       {props.onClick && (
         <Click
           sourceId={props.id}
