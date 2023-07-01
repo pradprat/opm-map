@@ -50,6 +50,9 @@ const IndexPage: React.FC<PageProps> = () => {
     zip: "",
   });
   const [zipGeojson, setzipGeojson] = useState();
+  const [stateGeojson, setstateGeojson] = useState(
+    geoJsonAddRandomFeatureId(az_geojson)
+  );
   const [pointGeojson, setpointGeojson] = useState();
   const [zipSelected, setzipSelected] = useState("");
   const [bedroomList, setbedroomList] = useState([]);
@@ -174,6 +177,17 @@ const IndexPage: React.FC<PageProps> = () => {
     return () => {};
   }, [zipSelected, filters]);
 
+  useEffect(() => {
+    if (level.current === "state") {
+      const bounds = turf.bbox(stateGeojson) as any;
+      map.current?.fitBounds(bounds, {
+        padding: 20,
+      });
+    }
+
+    return () => {};
+  }, [level.current]);
+
   const zoomToZip = (zip: string) => {
     if (zipGeojson === undefined || zipGeojson === "") {
       return;
@@ -272,7 +286,7 @@ const IndexPage: React.FC<PageProps> = () => {
           {level.current === "state" && (
             <ComposedLayer
               id="state"
-              geojson={geoJsonAddRandomFeatureId(az_geojson)}
+              geojson={stateGeojson}
               layerProps={getGeneralLayer()}
               hoverEffect
               onClick={() => {
