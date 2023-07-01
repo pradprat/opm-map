@@ -29,7 +29,7 @@ const Sidebar = (props: Props) => {
         ></Image>
       </Box>
       <VStack alignItems={"start"} w={"full"}>
-        <Accordion allowToggle w={"full"} defaultIndex={[0]} allowMultiple>
+        <Accordion w={"full"} defaultIndex={[0]} allowMultiple>
           <AccordionItem border={"none"}>
             <AccordionButton>
               <Button variant={"unstyled"} w={"full"} textAlign={"left"}>

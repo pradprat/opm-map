@@ -4,31 +4,13 @@ import mapboxgl from "mapbox-gl";
 import React from "react";
 import {
   Box,
-  Breadcrumb,
-  BreadcrumbItem,
   Button,
   Flex,
-  Heading,
-  Image,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  RangeSlider,
-  RangeSliderFilledTrack,
-  RangeSliderMark,
-  RangeSliderThumb,
-  RangeSliderTrack,
   VStack,
 } from "@chakra-ui/react";
 import pivot_bedroom from "../content/pivot_bedroom.json";
 import us_zip from "../content/us_zip.json";
-import Map, { Layer, Marker, NavigationControl, Source } from "react-map-gl";
-import Hover from "../component/Hover";
-import BedroomFilter from "../component/BedroomFilter";
-import { MdAttachMoney, MdOutlineChevronRight } from "react-icons/md";
+import Map, { Marker, NavigationControl } from "react-map-gl";
 import {
   filterGeojson,
   geoJsonAddFeatureId,
@@ -36,54 +18,49 @@ import {
   getPointGeojson,
 } from "../utils/map";
 import { formatMoneyDataToNumber } from "../utils/data";
-import Click from "../component/Click";
 import raw_bedroom from "../content/raw_bedroom.json";
 import * as turf from "@turf/turf";
 import {
-  getZipBorderLayer,
   getZipLabelLayer,
   getZipLayer,
 } from "../utils/layers";
-import { BEDROOM_COUNT, COLOR_SCENE } from "../constant";
+import { COLOR_SCENE } from "../constant";
 import BedroomMarker from "../component/BedroomMarker";
 import Sidebar from "../component/Sidebar";
+import ComposedLayer from "../component/ComposedLayer";
+import Filters from "../component/Filters";
 
 mapboxgl.accessToken =
   "pk.eyJ1IjoicHJhZHByYXQiLCJhIjoiY2tnMHhwbXZvMDc4eDJ1cXd1ZmFueHk5YiJ9.wfhci5Mpn6cahjx3GnOfYQ";
 
 const IndexPage: React.FC<PageProps> = () => {
   const [refreshMarker, setrefreshMarker] = useState(0);
-  // const breakpoint = useBreakpoint({ ssr: false });
-  // const [isOnMobile] = useMediaQuery("(min-width: 30em)");
   const map = useRef<mapboxgl.Map>();
 
   // state
   const [filters, setfilters] = useState({
     bedroom: ["1"],
-  });
-  const [sliderData, setsliderData] = useState({
-    min: 0,
-    max: 0,
-    value: [0, 0],
+    revenue: {
+      min: 0,
+      max: 0,
+      value: [0, 0],
+    },
   });
   const [zipGeojson, setzipGeojson] = useState();
-  const [zipBorderGeojson, setzipBorderGeojson] = useState();
   const [pointGeojson, setpointGeojson] = useState();
   const [zipSelected, setzipSelected] = useState("");
   const [bedroomList, setbedroomList] = useState([]);
-  const [selectedBedroom, setselectedBedroom] = useState<any>({});
 
   // memo
   const zipLayer = useMemo(
     () =>
       getZipLayer({
         numBedroom: filters.bedroom[0],
-        min: sliderData.min,
-        max: sliderData.max,
+        min: filters.revenue.min,
+        max: filters.revenue.max,
       }),
-    [filters, sliderData]
+    [filters, filters.revenue]
   );
-  const zipBorderLayer = useMemo(() => getZipBorderLayer(), []);
   const labelLayer = useMemo(
     () => getZipLabelLayer({ numBedroom: filters.bedroom[0] }),
     [filters]
@@ -91,10 +68,11 @@ const IndexPage: React.FC<PageProps> = () => {
   const filteredBedroomList = useMemo(() => {
     return bedroomList.filter((item: any) => {
       return (
-        item.revenue > sliderData.value[0] && item.revenue < sliderData.value[1]
+        item.revenue > filters.revenue.value[0] &&
+        item.revenue < filters.revenue.value[1]
       );
     });
-  }, [sliderData.value, bedroomList]);
+  }, [filters.revenue.value, bedroomList]);
 
   // effect
   useEffect(() => {
@@ -126,31 +104,35 @@ const IndexPage: React.FC<PageProps> = () => {
       });
       const min = Math.min(...bedroomData);
       const max = Math.max(...bedroomData);
-      setsliderData({
-        min,
-        max,
-        value: [min, max],
+      setfilters({
+        ...filters,
+        revenue: {
+          min,
+          max,
+          value: [min, max],
+        },
       });
     });
     setzipGeojson(addedDataGeojson);
     const pointGeojson = getPointGeojson(addedDataGeojson);
     setpointGeojson(pointGeojson);
-    setzipBorderGeojson(us_zip as any);
     return () => {};
-  }, [filters]);
+  }, [filters.bedroom]);
 
   useEffect(() => {
     const filteredZipGeojson = (zipGeojson as any)?.features.filter(
       (item: any) =>
         item.properties["num_avg__" + filters.bedroom[0]] >
-          sliderData.value[0] &&
-        item.properties["num_avg__" + filters.bedroom[0]] < sliderData.value[1]
+          filters.revenue.value[0] &&
+        item.properties["num_avg__" + filters.bedroom[0]] <
+          filters.revenue.value[1]
     );
     const filteredPointGeojson = (pointGeojson as any)?.features.filter(
       (item: any) =>
         item.properties["num_avg__" + filters.bedroom[0]] >
-          sliderData.value[0] &&
-        item.properties["num_avg__" + filters.bedroom[0]] < sliderData.value[1]
+          filters.revenue.value[0] &&
+        item.properties["num_avg__" + filters.bedroom[0]] <
+          filters.revenue.value[1]
     );
     (map.current?.getSource("zip") as any)?.setData({
       type: "FeatureCollection",
@@ -161,7 +143,7 @@ const IndexPage: React.FC<PageProps> = () => {
       features: filteredPointGeojson,
     });
     return () => {};
-  }, [sliderData]);
+  }, [filters.revenue]);
 
   useEffect(() => {
     if (zipSelected === "" || zipSelected === undefined) {
@@ -188,16 +170,6 @@ const IndexPage: React.FC<PageProps> = () => {
     }, 500);
     return () => {};
   }, [zipSelected, filters]);
-
-  // useEffect(() => {
-  //   resizeMap();
-  //   return () => {};
-  // }, [isOnMobile]);
-
-  // function
-  const resizeMap = () => {
-    map.current?.resize();
-  };
 
   const zoomToZip = (zip: string) => {
     if (zipGeojson === undefined || zipGeojson === "") {
@@ -240,76 +212,7 @@ const IndexPage: React.FC<PageProps> = () => {
           gap={2}
           minWidth={"200px"}
         >
-          <VStack
-            bg={"white"}
-            p={4}
-            shadow={"lg"}
-            borderRadius={"lg"}
-            alignItems={"start"}
-            gap={4}
-            minWidth={240}
-          >
-            <VStack w={"full"} alignItems={"start"}>
-              <Heading size={"md"}>Bedroom</Heading>
-              <BedroomFilter
-                setfilters={setfilters}
-                filters={filters}
-                allowMultiple={zipSelected !== ""}
-                colorScene={COLOR_SCENE}
-                bedroomCount={BEDROOM_COUNT}
-              ></BedroomFilter>
-            </VStack>
-            <VStack w={"full"} alignItems={"start"} pb={8}>
-              <Heading size={"md"}>Revenue</Heading>
-              <Box px={4} w={"full"}>
-                <RangeSlider
-                  aria-label={["min", "max"]}
-                  value={sliderData.value}
-                  onChange={(value) => {
-                    setsliderData({ ...sliderData, value: value as number[] });
-                  }}
-                  min={sliderData.min}
-                  max={sliderData.max}
-                >
-                  <RangeSliderMark
-                    value={sliderData.min || 0}
-                    mt="2.5"
-                    ml="-3"
-                    fontWeight={"bold"}
-                    fontSize="sm"
-                  >
-                    {new Intl.NumberFormat("en-US", {
-                      style: "currency",
-                      currency: "USD",
-                      notation: "compact",
-                    }).format(sliderData.min)}
-                  </RangeSliderMark>
-                  <RangeSliderMark
-                    value={sliderData.max || 0}
-                    mt="2.5"
-                    ml="-3"
-                    fontWeight={"bold"}
-                    fontSize="sm"
-                  >
-                    {new Intl.NumberFormat("en-US", {
-                      style: "currency",
-                      currency: "USD",
-                      notation: "compact",
-                    }).format(sliderData.max)}
-                  </RangeSliderMark>
-                  <RangeSliderTrack>
-                    <RangeSliderFilledTrack bg={COLOR_SCENE[0]} />
-                  </RangeSliderTrack>
-                  <RangeSliderThumb boxSize={6} index={0}>
-                    <Box as={MdAttachMoney} />
-                  </RangeSliderThumb>
-                  <RangeSliderThumb boxSize={6} index={1}>
-                    <Box as={MdAttachMoney} />
-                  </RangeSliderThumb>
-                </RangeSlider>
-              </Box>
-            </VStack>
-          </VStack>
+          <Filters filters={filters} setfilters={setfilters}></Filters>
           <Box>
             {zipSelected && (
               <Button
@@ -335,24 +238,21 @@ const IndexPage: React.FC<PageProps> = () => {
             setrefreshMarker(e.target.getCenter().lat);
           }}
         >
-          <Source id="zip-border" type="geojson" data={zipBorderGeojson}>
-            <Layer {...(zipBorderLayer as any)}></Layer>
-          </Source>
           {!zipSelected && (
-            <Source id="zip" type="geojson" data={zipGeojson}>
-              <Layer {...(zipLayer as any)} beforeId="zip-border"></Layer>
-              <Hover sourceId="zip" layerId="zip"></Hover>
-              <Click
-                sourceId="zip"
-                layerId="zip"
+            <>
+              <ComposedLayer
+                id="zip"
+                geojson={zipGeojson}
+                layerProps={zipLayer}
+                hoverEffect
                 onClick={setOnClickZip}
-              ></Click>
-            </Source>
-          )}
-          {!zipSelected && (
-            <Source id="zip-label" type="geojson" data={pointGeojson}>
-              <Layer {...(labelLayer as any)}></Layer>
-            </Source>
+              ></ComposedLayer>
+              <ComposedLayer
+                id="zip-label"
+                geojson={pointGeojson}
+                layerProps={labelLayer}
+              ></ComposedLayer>
+            </>
           )}
           {filteredBedroomList.map((item: any) => (
             <Marker
@@ -368,29 +268,7 @@ const IndexPage: React.FC<PageProps> = () => {
           ))}
           <NavigationControl />
         </Map>
-        <Modal
-          isOpen={selectedBedroom.title}
-          onClose={() => setselectedBedroom({})}
-        >
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>{selectedBedroom.title}</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              <Image
-                src={selectedBedroom.img_cover}
-                borderRadius={"md"}
-                mb={4}
-                height={300}
-                width={"full"}
-                fallbackSrc="https://via.placeholder.com/300"
-                objectFit={"cover"}
-              ></Image>
-            </ModalBody>
-          </ModalContent>
-        </Modal>
       </Box>
-      {/* filters */}
     </Flex>
   );
 };

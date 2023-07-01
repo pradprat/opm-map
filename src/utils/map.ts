@@ -23,8 +23,6 @@ export const geoJsonAddProperties = (
       },
     };
   });
-  console.log(features);
-
   return {
     ...geojson,
     features,

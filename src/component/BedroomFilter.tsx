@@ -4,7 +4,6 @@ import React from "react";
 interface Props {
   setfilters: (filters: any) => void;
   filters: any;
-  allowMultiple?: boolean;
   colorScene?: string[];
   bedroomCount?: string[];
 }
@@ -25,27 +24,19 @@ const BedroomFilter = (props: Props) => {
             w={"full"}
             key={item}
             onClick={() => {
-              if (props.allowMultiple) {
-                // toggle filter
-                const ifExist = props.filters.bedroom.includes(item);
-                if (ifExist && props.filters.bedroom.length > 1) {
-                  props.setfilters({
-                    ...props.filters,
-                    bedroom: props.filters.bedroom.filter(
-                      (i: string) => i !== item
-                    ),
-                  });
-                }
-                if (!ifExist) {
-                  props.setfilters({
-                    ...props.filters,
-                    bedroom: [...props.filters.bedroom, item],
-                  });
-                }
-              } else {
+              const ifExist = props.filters.bedroom.includes(item);
+              if (ifExist && props.filters.bedroom.length > 1) {
                 props.setfilters({
                   ...props.filters,
-                  bedroom: [item],
+                  bedroom: props.filters.bedroom.filter(
+                    (i: string) => i !== item
+                  ),
+                });
+              }
+              if (!ifExist) {
+                props.setfilters({
+                  ...props.filters,
+                  bedroom: [...props.filters.bedroom, item],
                 });
               }
             }}
