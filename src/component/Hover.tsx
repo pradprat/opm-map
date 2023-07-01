@@ -12,7 +12,6 @@ const Hover = (props: Props) => {
   const { current: map } = useMap();
   useEffect(() => {
     map?.on("mousemove", props.layerId, (e: any) => {
-      console.log(e.features[0]);
       if (e.features.length > 0) {
         if (hoveredPolygonId !== null) {
           map.setFeatureState(

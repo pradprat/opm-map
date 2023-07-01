@@ -43,6 +43,12 @@ const IndexPage: React.FC<PageProps> = () => {
       value: [0, 0],
     },
   });
+  const [level, setlevel] = useState({
+    current: "state",
+    state: "",
+    city: "",
+    zip: "",
+  });
   const [zipGeojson, setzipGeojson] = useState();
   const [pointGeojson, setpointGeojson] = useState();
   const [zipSelected, setzipSelected] = useState("");
@@ -193,6 +199,11 @@ const IndexPage: React.FC<PageProps> = () => {
   const setOnClickZip = (e: any) => {
     const zipcode = e.features[0].properties.zipcode;
     setzipSelected(zipcode);
+    setlevel({
+      ...level,
+      zip: zipcode,
+      current: "zip",
+    });
   };
 
   return (
@@ -211,13 +222,36 @@ const IndexPage: React.FC<PageProps> = () => {
         >
           <Filters filters={filters} setfilters={setfilters}></Filters>
           <Box>
-            {zipSelected && (
+            {level.current === "zip" && (
               <Button
-                onClick={() => setzipSelected("")}
+                onClick={() => {
+                  setzipSelected("");
+                  setlevel({
+                    ...level,
+                    current: "city",
+                    zip: "",
+                  });
+                }}
                 bg={"white"}
                 shadow={"lg"}
               >
                 Back to city view
+              </Button>
+            )}
+            {level.current === "city" && (
+              <Button
+                onClick={() => {
+                  setzipSelected("");
+                  setlevel({
+                    ...level,
+                    current: "state",
+                    city: "",
+                  });
+                }}
+                bg={"white"}
+                shadow={"lg"}
+              >
+                Back to state view
               </Button>
             )}
           </Box>
@@ -235,14 +269,22 @@ const IndexPage: React.FC<PageProps> = () => {
             setrefreshMarker(e.target.getCenter().lat);
           }}
         >
-          {/* city */}
-          <ComposedLayer
-            id="state"
-            geojson={geoJsonAddRandomFeatureId(az_geojson)}
-            layerProps={getGeneralLayer()}
-            hoverEffect
-          ></ComposedLayer>
-          {!zipSelected && (
+          {level.current === "state" && (
+            <ComposedLayer
+              id="state"
+              geojson={geoJsonAddRandomFeatureId(az_geojson)}
+              layerProps={getGeneralLayer()}
+              hoverEffect
+              onClick={() => {
+                setlevel({
+                  ...level,
+                  current: "city",
+                  state: "AZ",
+                });
+              }}
+            ></ComposedLayer>
+          )}
+          {level.current === "city" && (
             <>
               <ComposedLayer
                 id="zip"
