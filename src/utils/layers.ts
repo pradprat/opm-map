@@ -4,7 +4,7 @@ export const getGeneralLayer = () => {
     type: "fill",
     layout: {},
     paint: {
-      "fill-color": "blue",
+      "fill-color": COLOR_SCENE[0],
       "fill-opacity": [
         "case",
         ["boolean", ["feature-state", "hover"], false],
@@ -48,6 +48,27 @@ export const getZipBorderLayer = () => {
   };
 };
 export const getZipLabelLayer = ({ numBedroom }: any) => {
+  const bedroomRevenueTextConfig: any[] = [];
+  console.log({numBedroom});
+  
+  if (numBedroom.length === 1) {
+    bedroomRevenueTextConfig.push(["get", "avg__" + numBedroom[0]]);
+    bedroomRevenueTextConfig.push({
+      "font-scale": 1.2,
+    });
+  } else {
+    numBedroom.forEach((bedroom: any, index: number) => {
+      bedroomRevenueTextConfig.push(`${bedroom} Bedroom - `);
+      bedroomRevenueTextConfig.push({});
+      bedroomRevenueTextConfig.push(["get", "avg__" + bedroom]);
+      bedroomRevenueTextConfig.push({
+        "font-scale": 1.2,
+      });
+      bedroomRevenueTextConfig.push("\n");
+      bedroomRevenueTextConfig.push({});
+    });
+  }
+
   return {
     type: "symbol",
     layout: {
@@ -57,10 +78,7 @@ export const getZipLabelLayer = ({ numBedroom }: any) => {
         { "font-scale": 1.2 },
         "\n",
         {},
-        ["get", "avg__" + numBedroom],
-        {
-          "font-scale": 0.8,
-        },
+        ...bedroomRevenueTextConfig,
       ],
       "text-variable-anchor": ["top", "bottom", "left", "right"],
       "text-radial-offset": 0.5,

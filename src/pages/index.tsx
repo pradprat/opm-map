@@ -68,7 +68,7 @@ const IndexPage: React.FC<PageProps> = () => {
     [filters, filters.revenue]
   );
   const labelLayer = useMemo(
-    () => getZipLabelLayer({ numBedroom: filters.bedroom[0] }),
+    () => getZipLabelLayer({ numBedroom: filters.bedroom }),
     [filters]
   );
   const filteredBedroomList = useMemo(() => {
@@ -234,7 +234,9 @@ const IndexPage: React.FC<PageProps> = () => {
           gap={2}
           minWidth={"200px"}
         >
-          <Filters filters={filters} setfilters={setfilters}></Filters>
+          {["zip", "city"].includes(level.current) && (
+            <Filters filters={filters} setfilters={setfilters}></Filters>
+          )}
           <Box>
             {level.current === "zip" && (
               <Button
