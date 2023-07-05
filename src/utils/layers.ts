@@ -49,8 +49,8 @@ export const getZipBorderLayer = () => {
 };
 export const getZipLabelLayer = ({ numBedroom }: any) => {
   const bedroomRevenueTextConfig: any[] = [];
-  console.log({numBedroom});
-  
+  console.log({ numBedroom });
+
   if (numBedroom.length === 1) {
     bedroomRevenueTextConfig.push(["get", "avg__" + numBedroom[0]]);
     bedroomRevenueTextConfig.push({

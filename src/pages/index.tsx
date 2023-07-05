@@ -72,12 +72,7 @@ const IndexPage: React.FC<PageProps> = () => {
     [filters]
   );
   const filteredBedroomList = useMemo(() => {
-    return bedroomList.filter((item: any) => {
-      return (
-        item.revenue > filters.revenue.value[0] &&
-        item.revenue < filters.revenue.value[1]
-      );
-    });
+    return bedroomList;
   }, [filters.revenue.value, bedroomList]);
 
   // effect
