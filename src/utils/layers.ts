@@ -59,10 +59,13 @@ export const getZipLabelLayer = ({ numBedroom }: any) => {
   } else {
     numBedroom.forEach((bedroom: any, index: number) => {
       bedroomRevenueTextConfig.push(`${bedroom} Bedroom - `);
-      bedroomRevenueTextConfig.push({});
+      bedroomRevenueTextConfig.push({
+        // "text-color": COLOR_SCENE[index],
+      });
       bedroomRevenueTextConfig.push(["get", "avg__" + bedroom]);
       bedroomRevenueTextConfig.push({
         "font-scale": 1.2,
+        // "text-color": COLOR_SCENE[index],
       });
       bedroomRevenueTextConfig.push("\n");
       bedroomRevenueTextConfig.push({});

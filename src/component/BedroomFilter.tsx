@@ -1,5 +1,6 @@
 import { Box, Button, ButtonProps, Heading, VStack } from "@chakra-ui/react";
-import React from "react";
+import React, { useMemo } from "react";
+import SliderFilter from "./SliderFilter";
 
 interface Props {
   setfilters: (filters: any) => void;
@@ -14,43 +15,50 @@ const selectedFilter = {
 } as ButtonProps;
 
 const BedroomFilter = (props: Props) => {
+  const isActive = (item: string) => {
+    return props.filters.bedroom.includes(item);
+  };
   return (
     <VStack alignItems={"start"} w={"full"}>
       {props.bedroomCount?.map((item) => {
         const index = props.filters.bedroom.indexOf(item);
         return (
-          <Button
-            size={"sm"}
-            w={"full"}
-            key={item}
-            onClick={() => {
-              const ifExist = props.filters.bedroom.includes(item);
-              if (ifExist && props.filters.bedroom.length > 1) {
-                props.setfilters({
-                  ...props.filters,
-                  bedroom: props.filters.bedroom.filter(
-                    (i: string) => i !== item
-                  ),
-                });
-              }
-              if (!ifExist) {
-                props.setfilters({
-                  ...props.filters,
-                  bedroom: [...props.filters.bedroom, item],
-                });
-              }
-            }}
-            {...(props.filters.bedroom.includes(item) ? selectedFilter : {})}
-            bg={
-              props.filters.bedroom.includes(item)
-                ? props.colorScene?.[index]
-                : "gray.300"
-            }
-            textAlign={"left"}
-            justifyContent={"flex-start"}
-          >
-            {item} bedrooms
-          </Button>
+          <Box w={"full"}>
+            <Button
+              size={"sm"}
+              w={"full"}
+              key={item}
+              onClick={() => {
+                const ifExist = props.filters.bedroom.includes(item);
+                if (ifExist && props.filters.bedroom.length > 1) {
+                  props.setfilters({
+                    ...props.filters,
+                    bedroom: props.filters.bedroom.filter(
+                      (i: string) => i !== item
+                    ),
+                  });
+                }
+                if (!ifExist) {
+                  props.setfilters({
+                    ...props.filters,
+                    bedroom: [...props.filters.bedroom, item],
+                  });
+                }
+              }}
+              {...(isActive(item) ? selectedFilter : {})}
+              bg={isActive(item) ? props.colorScene?.[index] : "gray.300"}
+              textAlign={"left"}
+              justifyContent={"flex-start"}
+            >
+              {item} bedrooms
+            </Button>
+            {isActive(item) && (
+              <SliderFilter
+                filters={props.filters}
+                setfilters={props.setfilters}
+              ></SliderFilter>
+            )}
+          </Box>
         );
       })}
     </VStack>
