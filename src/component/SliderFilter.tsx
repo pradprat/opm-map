@@ -35,18 +35,15 @@ const SliderFilter = (props: Props) => {
     <Box px={4} py={2} w={"full"}>
       <RangeSlider
         aria-label={["min", "max"]}
-        value={props.filters.revenue.value}
+        value={props.filters?.value}
         onChange={(value: any) => {
-          props.setfilters({
-            ...props.filters,
-            revenue: { ...props.filters.revenue, value: value },
-          });
+          props.setfilters({ ...props.filters, value: value });
         }}
-        min={props.filters.revenue.min}
-        max={props.filters.revenue.max}
+        min={props.filters?.min}
+        max={props.filters?.max}
       >
         <RangeSliderMark
-          value={props.filters.revenue.min || 0}
+          value={props.filters?.min || 0}
           mt="2.5"
           ml="-3"
           fontWeight={"bold"}
@@ -56,10 +53,10 @@ const SliderFilter = (props: Props) => {
             style: "currency",
             currency: "USD",
             notation: "compact",
-          }).format(props.filters.revenue.min)}
+          }).format(props.filters?.min)}
         </RangeSliderMark>
         <RangeSliderMark
-          value={props.filters.revenue.max || 0}
+          value={props.filters?.max || 0}
           mt="2.5"
           ml="-3"
           fontWeight={"bold"}
@@ -69,7 +66,7 @@ const SliderFilter = (props: Props) => {
             style: "currency",
             currency: "USD",
             notation: "compact",
-          }).format(props.filters.revenue.max)}
+          }).format(props.filters?.max)}
         </RangeSliderMark>
         <RangeSliderTrack>
           <RangeSliderFilledTrack bg={COLOR_SCENE[0]} />

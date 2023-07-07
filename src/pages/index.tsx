@@ -37,11 +37,7 @@ const IndexPage: React.FC<PageProps> = () => {
   // state
   const [filters, setfilters] = useState({
     bedroom: ["1"],
-    revenue: {
-      min: 0,
-      max: 0,
-      value: [0, 0],
-    },
+    revenue: {} as { [key: string]: any },
   });
   const [level, setlevel] = useState({
     current: "state",
@@ -57,13 +53,38 @@ const IndexPage: React.FC<PageProps> = () => {
   const [zipSelected, setzipSelected] = useState("");
   const [bedroomList, setbedroomList] = useState([]);
 
+  useEffect(() => {
+    const revenueFilter = filters.bedroom.map((bedroom) => {
+      const countBedroom = bedroomList.filter(
+        (item: any) =>
+          Number(item["bedrooms"]) === Number(bedroom) && item["revenue"]
+      );
+      const minmax = getMinMax(countBedroom, "revenue");
+      return {
+        [bedroom]: {
+          min: minmax.min,
+          max: minmax.max,
+          value: [minmax.min, minmax.max],
+        },
+      };
+    });
+    setfilters({
+      ...filters,
+      revenue: {
+        ...filters.revenue,
+        ...revenueFilter.reduce((a, b) => ({ ...a, ...b }), {}),
+      },
+    });
+    return () => {};
+  }, [bedroomList]);
+
   // memo
   const zipLayer = useMemo(
     () =>
       getZipLayer({
         numBedroom: filters.bedroom[0],
-        min: filters.revenue.min,
-        max: filters.revenue.max,
+        min: 0,
+        max: 2000,
       }),
     [filters, filters.revenue]
   );
@@ -71,9 +92,17 @@ const IndexPage: React.FC<PageProps> = () => {
     () => getZipLabelLayer({ numBedroom: filters.bedroom }),
     [filters]
   );
+
   const filteredBedroomList = useMemo(() => {
-    return bedroomList;
-  }, [filters.revenue.value, bedroomList]);
+    return bedroomList.filter((item: any) => {
+      const revenue = item["revenue"];
+      const bedroom = item["bedrooms"];
+      const revenueFilter = filters.revenue[String(bedroom)];
+      return (
+        revenue >= revenueFilter?.value[0] && revenue <= revenueFilter?.value[1]
+      );
+    });
+  }, [bedroomList, filters.revenue]);
 
   // effect
   useEffect(() => {
@@ -122,18 +151,10 @@ const IndexPage: React.FC<PageProps> = () => {
 
   useEffect(() => {
     const filteredZipGeojson = (zipGeojson as any)?.features.filter(
-      (item: any) =>
-        item.properties["num_avg__" + filters.bedroom[0]] >
-          filters.revenue.value[0] &&
-        item.properties["num_avg__" + filters.bedroom[0]] <
-          filters.revenue.value[1]
+      (item: any) => true
     );
     const filteredPointGeojson = (pointGeojson as any)?.features.filter(
-      (item: any) =>
-        item.properties["num_avg__" + filters.bedroom[0]] >
-          filters.revenue.value[0] &&
-        item.properties["num_avg__" + filters.bedroom[0]] <
-          filters.revenue.value[1]
+      (item: any) => true
     );
     (map.current?.getSource("zip") as any)?.setData({
       type: "FeatureCollection",
@@ -165,12 +186,13 @@ const IndexPage: React.FC<PageProps> = () => {
         color,
       };
     });
+
     setbedroomList(coloredBedrooms);
     setTimeout(() => {
       zoomToZip(zipSelected);
     }, 500);
     return () => {};
-  }, [zipSelected, filters]);
+  }, [zipSelected, filters.bedroom]);
 
   useEffect(() => {
     if (level.current === "state") {
@@ -182,6 +204,25 @@ const IndexPage: React.FC<PageProps> = () => {
 
     return () => {};
   }, [level.current]);
+
+  const getMinMax = (data: any, key: string) => {
+    const min = Math.min(...data.map((item: any) => item[key]));
+    const max = Math.max(...data.map((item: any) => item[key]));
+    return {
+      min,
+      max,
+    };
+  };
+
+  const setRevenueFilter = (key: string, value: any) => {
+    setfilters({
+      ...filters,
+      revenue: {
+        ...filters.revenue,
+        [key]: value,
+      },
+    });
+  };
 
   const zoomToZip = (zip: string) => {
     if (zipGeojson === undefined || zipGeojson === "") {

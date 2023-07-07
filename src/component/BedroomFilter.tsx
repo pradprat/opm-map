@@ -54,8 +54,16 @@ const BedroomFilter = (props: Props) => {
             </Button>
             {isActive(item) && (
               <SliderFilter
-                filters={props.filters}
-                setfilters={props.setfilters}
+                filters={props.filters.revenue[String(item)]}
+                setfilters={(filters: any) => {
+                  props.setfilters({
+                    ...props.filters,
+                    revenue: {
+                      ...props.filters.revenue,
+                      [item]: filters,
+                    },
+                  });
+                }}
               ></SliderFilter>
             )}
           </Box>
