@@ -22,10 +22,10 @@ export const getZipLayer = ({ numBedroom, min, max }: any) => {
       "fill-color": [
         "interpolate",
         ["exponential", 1],
-        ["get", "num_avg__" + numBedroom],
-        min / 2,
-        "white",
-        max,
+        ["get", "totalCount"],
+        0,
+        "gray",
+        1,
         COLOR_SCENE[0],
       ],
       "fill-opacity": [

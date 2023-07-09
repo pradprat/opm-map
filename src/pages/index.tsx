@@ -45,7 +45,8 @@ const IndexPage: React.FC<PageProps> = () => {
     city: "",
     zip: "",
   });
-  const [zipGeojson, setzipGeojson] = useState();
+  const [zipGeojson, setzipGeojson] = useState<any>();
+  const [zipGeojsonCache, setzipGeojsonCache] = useState<any>();
   const [stateGeojson, setstateGeojson] = useState(
     geoJsonAddRandomFeatureId(az_geojson)
   );
@@ -54,29 +55,31 @@ const IndexPage: React.FC<PageProps> = () => {
   const [bedroomList, setbedroomList] = useState([]);
 
   useEffect(() => {
-    const revenueFilter = filters.bedroom.map((bedroom) => {
-      const countBedroom = bedroomList.filter(
-        (item: any) =>
-          Number(item["bedrooms"]) === Number(bedroom) && item["revenue"]
-      );
-      const minmax = getMinMax(countBedroom, "revenue");
-      return {
-        [bedroom]: {
-          min: minmax.min,
-          max: minmax.max,
-          value: [minmax.min, minmax.max],
+    if (level.current === "zip") {
+      const revenueFilter = filters.bedroom.map((bedroom) => {
+        const countBedroom = bedroomList.filter(
+          (item: any) =>
+            Number(item["bedrooms"]) === Number(bedroom) && item["revenue"]
+        );
+        const minmax = getMinMax(countBedroom, "revenue");
+        return {
+          [bedroom]: {
+            min: minmax.min,
+            max: minmax.max,
+            value: [minmax.min, minmax.max],
+          },
+        };
+      });
+      setfilters({
+        ...filters,
+        revenue: {
+          ...filters.revenue,
+          ...revenueFilter.reduce((a, b) => ({ ...a, ...b }), {}),
         },
-      };
-    });
-    setfilters({
-      ...filters,
-      revenue: {
-        ...filters.revenue,
-        ...revenueFilter.reduce((a, b) => ({ ...a, ...b }), {}),
-      },
-    });
+      });
+    }
     return () => {};
-  }, [bedroomList]);
+  }, [bedroomList, level.current]);
 
   // memo
   const zipLayer = useMemo(
@@ -117,37 +120,87 @@ const IndexPage: React.FC<PageProps> = () => {
         })
         .reduce((a, b) => a || b);
     });
+    const listingCount = availableRoomData.map((item) => {
+      const bedCount = filters.bedroom.map((bedroom) => {
+        return item["num_count__" + bedroom];
+      });
+      const totalCount = bedCount.reduce((a, b) => a + b);
+      return {
+        ...item,
+        totalCount,
+      };
+    });
     const filteredGeojson = filterGeojson(
       zipGeojson,
-      availableRoomData,
+      listingCount,
       "ZCTA5CE10",
       "zipcode"
     );
     const addedDataGeojson = geoJsonAddProperties(
       filteredGeojson,
-      availableRoomData,
+      listingCount,
       "zipcode"
     );
-    filters.bedroom.forEach((bedroom) => {
-      const bedroomData = availableRoomData.map((item) => {
-        return item["num_avg__" + bedroom];
+    if (level.current === "city") {
+      const bedroomsMinMax = filters.bedroom.map((bedroom) => {
+        const bedroomData = availableRoomData.map((item) => {
+          return item["num_avg__" + bedroom];
+        });
+        const minmax = getMinMax(bedroomData);
+        return {
+          [String(bedroom)]: {
+            min: minmax.min,
+            max: minmax.max,
+            value: [minmax.min, minmax.max],
+          },
+        };
       });
-      const min = Math.min(...bedroomData);
-      const max = Math.max(...bedroomData);
       setfilters({
         ...filters,
         revenue: {
-          min,
-          max,
-          value: [min, max],
+          ...filters.revenue,
+          ...bedroomsMinMax.reduce((a, b) => ({ ...a, ...b }), {}),
         },
       });
-    });
-    setzipGeojson(addedDataGeojson);
+    }
+    setzipGeojsonCache(addedDataGeojson);
     const pointGeojson = getPointGeojson(addedDataGeojson);
     setpointGeojson(pointGeojson);
     return () => {};
-  }, [filters.bedroom]);
+  }, [filters.bedroom, level.current]);
+
+  useEffect(() => {
+    const zipData = zipGeojsonCache?.features;
+    const filteredListring = zipData?.map((item: any) => {
+      const bedroomFilterByRevenue = filters.bedroom?.map((bedroom) => {
+        const revenue = item.properties["num_avg__" + bedroom];
+        const revenueFilter = filters.revenue[String(bedroom)];
+        return (
+          revenue >= revenueFilter?.value[0] &&
+          revenue <= revenueFilter?.value[1]
+        );
+      });
+
+      return{
+        ...item,
+        properties: {
+          ...item.properties,
+          totalCount: bedroomFilterByRevenue.reduce(
+            (a, b) => a || b
+          ) ? item.properties.totalCount : 0,
+        },
+      }
+    });
+    const filteredZipGeojson = {
+      type: "FeatureCollection",
+      features: filteredListring || [],
+    };
+
+    setzipGeojson(filteredZipGeojson);
+    const pointGeojson = getPointGeojson(filteredZipGeojson);
+    setpointGeojson(pointGeojson);
+    return () => {};
+  }, [filters.revenue]);
 
   useEffect(() => {
     const filteredZipGeojson = (zipGeojson as any)?.features.filter(
@@ -201,13 +254,12 @@ const IndexPage: React.FC<PageProps> = () => {
         padding: 20,
       });
     }
-
     return () => {};
   }, [level.current]);
 
-  const getMinMax = (data: any, key: string) => {
-    const min = Math.min(...data.map((item: any) => item[key]));
-    const max = Math.max(...data.map((item: any) => item[key]));
+  const getMinMax = (data: any, key?: string) => {
+    const min = Math.min(...data.map((item: any) => (key ? item[key] : item)));
+    const max = Math.max(...data.map((item: any) => (key ? item[key] : item)));
     return {
       min,
       max,
