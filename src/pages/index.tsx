@@ -5,7 +5,7 @@ import React from "react";
 import { Box, Button, Flex, VStack } from "@chakra-ui/react";
 import pivot_bedroom from "../content/pivot_bedroom.json";
 import us_zip from "../content/us_zip.json";
-import Map, { LayerProps, Marker, NavigationControl } from "react-map-gl";
+import Map, { Marker, NavigationControl } from "react-map-gl";
 import {
   filterGeojson,
   geoJsonAddFeatureId,
@@ -18,9 +18,7 @@ import raw_bedroom from "../content/raw_bedroom.json";
 import az_geojson from "../data/geojson/us/cities/az/phoenix.json";
 import * as turf from "@turf/turf";
 import {
-  getGeneralLayer,
   getGeneralLineLayer,
-  getZipBorderLayer,
   getZipLabelLayer,
   getZipLayer,
 } from "../utils/layers";
@@ -61,7 +59,6 @@ const IndexPage: React.FC<PageProps> = () => {
     const zipFeature = zipGeojson?.features.find((item: any) => {
       return String(item.properties.zipcode) === String(zipSelected);
     });
-    console.log(zipFeature);
     return {
       type: "FeatureCollection",
       features: [zipFeature],
@@ -324,7 +321,7 @@ const IndexPage: React.FC<PageProps> = () => {
 
   return (
     <Flex>
-      <Box w={336} background={"#26023D"} color={"white"}>
+      <Box w={280} background={"#26023D"} color={"white"}>
         <Sidebar></Sidebar>
       </Box>
       <Box w="100%" h="100vh" flex={1}>
@@ -391,7 +388,7 @@ const IndexPage: React.FC<PageProps> = () => {
             <ComposedLayer
               id="state"
               geojson={stateGeojson}
-              layerProps={getGeneralLineLayer("black")}
+              layerProps={getGeneralLineLayer("#333333")}
               // hoverEffect
               // onClick={() => {
               //   setlevel({
@@ -415,7 +412,7 @@ const IndexPage: React.FC<PageProps> = () => {
                 id="zip-border"
                 sourceId="zip"
                 geojson={zipGeojson}
-                layerProps={getGeneralLineLayer()}
+                layerProps={getGeneralLineLayer("#4d4d4d")}
               ></ComposedLayer>
               <ComposedLayer
                 id="zip-label"
@@ -430,7 +427,7 @@ const IndexPage: React.FC<PageProps> = () => {
               id="zip-border-selected"
               sourceId="zip-border-selected"
               geojson={selectedZipGeojson}
-              layerProps={getGeneralLineLayer()}
+              layerProps={getGeneralLineLayer("#4d4d4d")}
             ></ComposedLayer>
           )}
           {filteredBedroomList.map((item: any) => (

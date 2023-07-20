@@ -58,7 +58,7 @@ const SliderFilter = (props: Props) => {
         <RangeSliderMark
           value={props.filters?.max || 0}
           mt="2.5"
-          ml="-3"
+          ml="-7"
           fontWeight={"bold"}
           fontSize="sm"
         >
