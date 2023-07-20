@@ -33,7 +33,7 @@ export const geoJsonAddFeatureId = (geojson: any, featureId: string) => {
   const features = geojson.features.map((feature: any) => {
     return {
       ...feature,
-      id: feature.properties[featureId],
+      id: Number(feature.properties[featureId]),
     };
   });
   return {

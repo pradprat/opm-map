@@ -29,20 +29,29 @@ export const getZipLayer = ({ numBedroom, min, max }: any) => {
     type: "fill",
     layout: {},
     paint: {
+      // "fill-color": [
+      //   "interpolate",
+      //   ["exponential", 1],
+      //   ["get", "totalCount"],
+      //   0,
+      //   "#232323",
+      //   1,
+      //   COLOR_SCENE[0],
+      // ],
       "fill-color": [
-        "interpolate",
-        ["exponential", 1],
-        ["get", "totalCount"],
-        0,
-        "#232323",
-        1,
-        COLOR_SCENE[0],
+        "match",
+        ["get", "hasListing"], // get the property
+        "hasListing",
+        COLOR_SCENE[0], // if 'GP' then yellow
+        "noListing",
+        "#000000", // if 'XX' then black
+        "#6B6B6B",
       ],
       "fill-opacity": [
         "case",
         ["boolean", ["feature-state", "hover"], false],
-        1,
-        0.6,
+        0.5,
+        0.4,
       ],
     },
   };
@@ -64,6 +73,7 @@ export const getZipLabelLayer = ({ numBedroom }: any) => {
     bedroomRevenueTextConfig.push(["get", "avg__" + numBedroom[0]]);
     bedroomRevenueTextConfig.push({
       "font-scale": 1.2,
+      "text-font": ["literal", ["DIN Offc Pro Regular"]],
     });
   } else {
     numBedroom.forEach((bedroom: any, index: number) => {
@@ -74,6 +84,7 @@ export const getZipLabelLayer = ({ numBedroom }: any) => {
       bedroomRevenueTextConfig.push(["get", "avg__" + bedroom]);
       bedroomRevenueTextConfig.push({
         "font-scale": 1.2,
+        "text-font": ["literal", ["DIN Offc Pro Regular"]],
         // "text-color": COLOR_SCENE[index],
       });
       bedroomRevenueTextConfig.push("\n");
@@ -87,7 +98,10 @@ export const getZipLabelLayer = ({ numBedroom }: any) => {
       "text-field": [
         "format",
         ["get", "zipcode"],
-        { "font-scale": 1.2 },
+        {
+          "font-scale": 1.2,
+          "text-font": ["literal", ["DIN Offc Pro Bold"]],
+        },
         "\n",
         {},
         ...bedroomRevenueTextConfig,

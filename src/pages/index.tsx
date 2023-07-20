@@ -16,6 +16,7 @@ import {
 import { formatMoneyDataToNumber } from "../utils/data";
 import raw_bedroom from "../content/raw_bedroom.json";
 import az_geojson from "../data/geojson/us/cities/az/phoenix.json";
+import phoenix_zip from "../data/phoenixZipcode.json";
 import * as turf from "@turf/turf";
 import {
   getGeneralLineLayer,
@@ -64,6 +65,18 @@ const IndexPage: React.FC<PageProps> = () => {
       features: [zipFeature],
     };
   }, [zipGeojson, zipSelected]);
+
+  const allZipList = phoenix_zip.map((item) => item.zip_code);
+  const allZipGeojson = useMemo(() => {
+    const zipGeojson = geoJsonAddFeatureId(us_zip, "ZCTA5CE10");
+    const zipFeature = zipGeojson?.features.filter((item: any) => {
+      return allZipList.includes(Number(item.id));
+    });
+    return {
+      type: "FeatureCollection",
+      features: zipFeature,
+    };
+  }, [allZipList]);
 
   useEffect(() => {
     if (level.current === "zip") {
@@ -120,18 +133,11 @@ const IndexPage: React.FC<PageProps> = () => {
 
   // effect
   useEffect(() => {
-    const zipGeojson = geoJsonAddFeatureId(us_zip, "ZCTA5CE10");
+    const zipGeojson = allZipGeojson;
     const room_data = pivot_bedroom.map((item) => {
       return formatMoneyDataToNumber(item);
     });
-    const availableRoomData = room_data.filter((item) => {
-      return filters.bedroom
-        .map((bedroom) => {
-          return item["num_avg__" + bedroom] !== 0;
-        })
-        .reduce((a, b) => a || b);
-    });
-    const listingCount = availableRoomData.map((item) => {
+    const listingCount = room_data.map((item) => {
       const bedCount = filters.bedroom.map((bedroom) => {
         return item["num_count__" + bedroom];
       });
@@ -154,7 +160,7 @@ const IndexPage: React.FC<PageProps> = () => {
     );
     if (level.current === "city") {
       const bedroomsMinMax = filters.bedroom.map((bedroom) => {
-        const bedroomData = availableRoomData.map((item) => {
+        const bedroomData = room_data.map((item) => {
           return item["num_avg__" + bedroom];
         });
         const minmax = getMinMax(bedroomData);
@@ -183,6 +189,8 @@ const IndexPage: React.FC<PageProps> = () => {
   useEffect(() => {
     const zipData = zipGeojsonCache?.features;
     const filteredListring = zipData?.map((item: any) => {
+      console.log(zipData);
+
       const bedroomFilterByRevenue = filters.bedroom?.map((bedroom) => {
         const revenue = item.properties["num_avg__" + bedroom];
         const revenueFilter = filters.revenue[String(bedroom)];
@@ -191,6 +199,7 @@ const IndexPage: React.FC<PageProps> = () => {
           revenue <= revenueFilter?.value[1]
         );
       });
+      const hasListing = bedroomFilterByRevenue.reduce((a, b) => a || b);
 
       return {
         ...item,
@@ -199,6 +208,11 @@ const IndexPage: React.FC<PageProps> = () => {
           totalCount: bedroomFilterByRevenue.reduce((a, b) => a || b)
             ? item.properties.totalCount
             : 0,
+          hasListing: item.properties.totalCount
+            ? hasListing
+              ? "hasListing"
+              : "noListing"
+            : "noData",
         },
       };
     });
@@ -277,16 +291,6 @@ const IndexPage: React.FC<PageProps> = () => {
     };
   };
 
-  const setRevenueFilter = (key: string, value: any) => {
-    setfilters({
-      ...filters,
-      revenue: {
-        ...filters.revenue,
-        [key]: value,
-      },
-    });
-  };
-
   const zoomToZip = (zip: string) => {
     if (zipGeojson === undefined || zipGeojson === "") {
       return;
@@ -353,7 +357,7 @@ const IndexPage: React.FC<PageProps> = () => {
                 Back to city view
               </Button>
             )}
-            {level.current === "city" && (
+            {/* {level.current === "city" && (
               <Button
                 onClick={() => {
                   setzipSelected("");
@@ -368,7 +372,7 @@ const IndexPage: React.FC<PageProps> = () => {
               >
                 Back to state view
               </Button>
-            )}
+            )} */}
           </Box>
         </VStack>
         <Map
@@ -410,8 +414,8 @@ const IndexPage: React.FC<PageProps> = () => {
               ></ComposedLayer>
               <ComposedLayer
                 id="zip-border"
-                sourceId="zip"
-                geojson={zipGeojson}
+                sourceId="zip-border"
+                geojson={allZipGeojson}
                 layerProps={getGeneralLineLayer("#4d4d4d")}
               ></ComposedLayer>
               <ComposedLayer
