@@ -7,6 +7,7 @@ import { Feature, FeatureCollection, Geometry, Properties } from "@turf/turf";
 
 interface Props {
   id: string;
+  sourceId?: string;
   onClick?: (e: any) => void;
   onHover?: (e: any) => void;
   hoverEffect?: boolean;
@@ -21,13 +22,12 @@ interface Props {
 
 const ComposedLayer = (props: Props) => {
   return (
-    <Source id={props.id} type="geojson" data={props.geojson || ""}>
-      {props.layerProps && (
-        <Layer
-          id={props.id}
-          {...props.layerProps}
-        ></Layer>
-      )}
+    <Source
+      id={props.sourceId || props.id}
+      type="geojson"
+      data={props.geojson || ""}
+    >
+      {props.layerProps && <Layer id={props.id} {...props.layerProps}></Layer>}
       {props.hoverEffect && (
         <Hover sourceId={props.id} layerId={props.id}></Hover>
       )}

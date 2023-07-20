@@ -19,6 +19,8 @@ import az_geojson from "../data/geojson/us/cities/az/phoenix.json";
 import * as turf from "@turf/turf";
 import {
   getGeneralLayer,
+  getGeneralLineLayer,
+  getZipBorderLayer,
   getZipLabelLayer,
   getZipLayer,
 } from "../utils/layers";
@@ -40,12 +42,13 @@ const IndexPage: React.FC<PageProps> = () => {
     revenue: {} as { [key: string]: any },
   });
   const [level, setlevel] = useState({
-    current: "state",
+    current: "city",
     state: "",
     city: "",
     zip: "",
   });
   const [zipGeojson, setzipGeojson] = useState<any>();
+
   const [zipGeojsonCache, setzipGeojsonCache] = useState<any>();
   const [stateGeojson, setstateGeojson] = useState(
     geoJsonAddRandomFeatureId(az_geojson)
@@ -53,6 +56,17 @@ const IndexPage: React.FC<PageProps> = () => {
   const [pointGeojson, setpointGeojson] = useState();
   const [zipSelected, setzipSelected] = useState("");
   const [bedroomList, setbedroomList] = useState([]);
+
+  const selectedZipGeojson = useMemo(() => {
+    const zipFeature = zipGeojson?.features.find((item: any) => {
+      return String(item.properties.zipcode) === String(zipSelected);
+    });
+    console.log(zipFeature);
+    return {
+      type: "FeatureCollection",
+      features: [zipFeature],
+    };
+  }, [zipGeojson, zipSelected]);
 
   useEffect(() => {
     if (level.current === "zip") {
@@ -181,15 +195,15 @@ const IndexPage: React.FC<PageProps> = () => {
         );
       });
 
-      return{
+      return {
         ...item,
         properties: {
           ...item.properties,
-          totalCount: bedroomFilterByRevenue.reduce(
-            (a, b) => a || b
-          ) ? item.properties.totalCount : 0,
+          totalCount: bedroomFilterByRevenue.reduce((a, b) => a || b)
+            ? item.properties.totalCount
+            : 0,
         },
-      }
+      };
     });
     const filteredZipGeojson = {
       type: "FeatureCollection",
@@ -373,19 +387,19 @@ const IndexPage: React.FC<PageProps> = () => {
             setrefreshMarker(e.target.getCenter().lat);
           }}
         >
-          {level.current === "state" && (
+          {level.current !== "zip" && (
             <ComposedLayer
               id="state"
               geojson={stateGeojson}
-              layerProps={getGeneralLayer()}
-              hoverEffect
-              onClick={() => {
-                setlevel({
-                  ...level,
-                  current: "city",
-                  state: "AZ",
-                });
-              }}
+              layerProps={getGeneralLineLayer("black")}
+              // hoverEffect
+              // onClick={() => {
+              //   setlevel({
+              //     ...level,
+              //     current: "city",
+              //     state: "AZ",
+              //   });
+              // }}
             ></ComposedLayer>
           )}
           {level.current === "city" && (
@@ -398,11 +412,26 @@ const IndexPage: React.FC<PageProps> = () => {
                 onClick={setOnClickZip}
               ></ComposedLayer>
               <ComposedLayer
+                id="zip-border"
+                sourceId="zip"
+                geojson={zipGeojson}
+                layerProps={getGeneralLineLayer()}
+              ></ComposedLayer>
+              <ComposedLayer
                 id="zip-label"
                 geojson={pointGeojson}
                 layerProps={labelLayer}
               ></ComposedLayer>
             </>
+          )}
+          {/* selected zip border */}
+          {level.current === "zip" && (
+            <ComposedLayer
+              id="zip-border-selected"
+              sourceId="zip-border-selected"
+              geojson={selectedZipGeojson}
+              layerProps={getGeneralLineLayer()}
+            ></ComposedLayer>
           )}
           {filteredBedroomList.map((item: any) => (
             <Marker

@@ -1,0 +1,658 @@
+[
+  {
+    "zip_code": 13135,
+    "latitude": 43.33021,
+    "longitude": -76.260803,
+    "city": "Phoenix",
+    "state": "NY",
+    "county": "Oswego"
+  },
+  {
+    "zip_code": 19460,
+    "latitude": 40.128175,
+    "longitude": -75.541769,
+    "city": "Phoenixville",
+    "state": "PA",
+    "county": "Chester"
+  },
+  {
+    "zip_code": 21131,
+    "latitude": 39.483255,
+    "longitude": -76.577619,
+    "city": "Phoenix",
+    "state": "MD",
+    "county": "Baltimore"
+  },
+  {
+    "zip_code": 85001,
+    "latitude": 33.703967,
+    "longitude": -112.351835,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85002,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85003,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85004,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85005,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85006,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85007,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85008,
+    "latitude": 33.446797,
+    "longitude": -111.953512,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85009,
+    "latitude": 33.447489,
+    "longitude": -111.96942,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85010,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85011,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85012,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85013,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85014,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85015,
+    "latitude": 33.478293,
+    "longitude": -112.115805,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85016,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85017,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85018,
+    "latitude": 33.482033,
+    "longitude": -111.735322,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85019,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85020,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85021,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85022,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85023,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85024,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85025,
+    "latitude": 33.422621,
+    "longitude": -111.723635,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85026,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85027,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85028,
+    "latitude": 33.382744,
+    "longitude": -111.66139,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85029,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85030,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85031,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85032,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85033,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85034,
+    "latitude": 33.431304,
+    "longitude": -111.987383,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85035,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85036,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85037,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85038,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85039,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85040,
+    "latitude": 33.367267,
+    "longitude": -112.066878,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85041,
+    "latitude": 33.379728,
+    "longitude": -112.112254,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85042,
+    "latitude": 33.355545,
+    "longitude": -112.052242,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85043,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85044,
+    "latitude": 33.338743,
+    "longitude": -111.97277,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85045,
+    "latitude": 33.302168,
+    "longitude": -112.122581,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85046,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85048,
+    "latitude": 33.316039,
+    "longitude": -112.066901,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85050,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85051,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85053,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85054,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85055,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85060,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85061,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85062,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85063,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85064,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85065,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85066,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85067,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85068,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85069,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85070,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85071,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85072,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85073,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85074,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85075,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85076,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85077,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85078,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85079,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85080,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85082,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85085,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85086,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85098,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 85099,
+    "latitude": 33.276539,
+    "longitude": -112.18717,
+    "city": "Phoenix",
+    "state": "AZ",
+    "county": "Maricopa"
+  },
+  {
+    "zip_code": 97535,
+    "latitude": 42.262556,
+    "longitude": -122.81464,
+    "city": "Phoenix",
+    "state": "OR",
+    "county": "Jackson"
+  }
+]

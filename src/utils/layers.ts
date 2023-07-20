@@ -14,6 +14,16 @@ export const getGeneralLayer = () => {
     },
   };
 };
+export const getGeneralLineLayer = (color?: string) => {
+  return {
+    type: "line",
+    layout: {},
+    paint: {
+      "line-color": color || "#232323",
+      "line-width": 2,
+    },
+  };
+};
 export const getZipLayer = ({ numBedroom, min, max }: any) => {
   return {
     type: "fill",
@@ -24,7 +34,7 @@ export const getZipLayer = ({ numBedroom, min, max }: any) => {
         ["exponential", 1],
         ["get", "totalCount"],
         0,
-        "gray",
+        "#232323",
         1,
         COLOR_SCENE[0],
       ],
@@ -32,7 +42,7 @@ export const getZipLayer = ({ numBedroom, min, max }: any) => {
         "case",
         ["boolean", ["feature-state", "hover"], false],
         1,
-        0.5,
+        0.6,
       ],
     },
   };
@@ -43,7 +53,7 @@ export const getZipBorderLayer = () => {
     layout: {},
     paint: {
       "line-color": "#ADADAD",
-      "line-width": 1,
+      "line-width": 2,
     },
   };
 };
