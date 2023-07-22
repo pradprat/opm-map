@@ -29,7 +29,11 @@ const ComposedLayer = (props: Props) => {
     >
       {props.layerProps && <Layer id={props.id} {...props.layerProps}></Layer>}
       {props.hoverEffect && (
-        <Hover sourceId={props.id} layerId={props.id}></Hover>
+        <Hover
+          sourceId={props.id}
+          layerId={props.id}
+          onHover={props.onHover}
+        ></Hover>
       )}
       {props.onClick && (
         <Click

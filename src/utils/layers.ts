@@ -110,6 +110,7 @@ export const getZipLabelLayer = ({ numBedroom }: any) => {
       "text-radial-offset": 0.5,
       "text-justify": "auto",
       "icon-image": ["get", "icon"],
+      "text-size": 12
     },
   };
 };

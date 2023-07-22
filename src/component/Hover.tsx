@@ -5,6 +5,7 @@ import { useMap } from "react-map-gl";
 interface Props {
   layerId: string;
   sourceId: string;
+  onHover?: (hoveredPolygonId?: number) => void;
 }
 
 const Hover = (props: Props) => {
@@ -14,6 +15,7 @@ const Hover = (props: Props) => {
     map?.on("mousemove", props.layerId, (e: any) => {
       if (e.features.length > 0) {
         if (hoveredPolygonId !== null) {
+          // props.onHover && props.onHover();
           map.setFeatureState(
             { source: props.sourceId, id: hoveredPolygonId },
             { hover: false }
@@ -21,6 +23,7 @@ const Hover = (props: Props) => {
         }
         hoveredPolygonId = e.features[0].id;
         if (hoveredPolygonId) {
+          props.onHover && props.onHover(hoveredPolygonId);
           map.setFeatureState(
             { source: props.sourceId, id: hoveredPolygonId },
             { hover: true }
@@ -29,6 +32,7 @@ const Hover = (props: Props) => {
       }
     });
     map?.on("mouseleave", props.layerId, (e: any) => {
+      props.onHover && props.onHover();
       map.setFeatureState(
         { source: props.sourceId, id: hoveredPolygonId },
         { hover: false }
@@ -39,6 +43,7 @@ const Hover = (props: Props) => {
       map?.off("mousemove", props.layerId, (e: any) => {
         if (e.features.length > 0) {
           if (hoveredPolygonId !== null) {
+            // props.onHover && props.onHover();
             map.setFeatureState(
               { source: props.sourceId, id: hoveredPolygonId },
               { hover: false }
@@ -46,6 +51,7 @@ const Hover = (props: Props) => {
           }
           hoveredPolygonId = e.features[0].id;
           if (hoveredPolygonId) {
+            props.onHover && props.onHover(hoveredPolygonId);
             map.setFeatureState(
               { source: props.sourceId, id: hoveredPolygonId },
               { hover: true }
@@ -54,6 +60,7 @@ const Hover = (props: Props) => {
         }
       });
       map?.off("mouseleave", props.layerId, (e: any) => {
+        props.onHover && props.onHover();
         map.setFeatureState(
           { source: props.sourceId, id: hoveredPolygonId },
           { hover: false }

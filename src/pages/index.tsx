@@ -55,6 +55,7 @@ const IndexPage: React.FC<PageProps> = () => {
   const [pointGeojson, setpointGeojson] = useState();
   const [zipSelected, setzipSelected] = useState("");
   const [bedroomList, setbedroomList] = useState([]);
+  const [zipHovered, setzipHovered] = useState();
 
   const selectedZipGeojson = useMemo(() => {
     const zipFeature = zipGeojson?.features.find((item: any) => {
@@ -282,6 +283,22 @@ const IndexPage: React.FC<PageProps> = () => {
     return () => {};
   }, [level.current]);
 
+  useEffect(() => {
+    console.log(zipHovered);
+    console.log(pointGeojson);
+
+    map.current?.setFeatureState(
+      { source: "zip-label", id: zipHovered },
+      { hover: true }
+    );
+    return () => {
+      // map.current?.setFeatureState(
+      //   { source: "zip-label", id: zipHovered },
+      //   { hover: false }
+      // );
+    };
+  }, [zipHovered]);
+
   const getMinMax = (data: any, key?: string) => {
     const min = Math.min(...data.map((item: any) => (key ? item[key] : item)));
     const max = Math.max(...data.map((item: any) => (key ? item[key] : item)));
@@ -410,11 +427,11 @@ const IndexPage: React.FC<PageProps> = () => {
                 geojson={zipGeojson}
                 layerProps={zipLayer}
                 hoverEffect
+                onHover={(id) => setzipHovered(id)}
                 onClick={setOnClickZip}
               ></ComposedLayer>
               <ComposedLayer
                 id="zip-border"
-                sourceId="zip-border"
                 geojson={allZipGeojson}
                 layerProps={getGeneralLineLayer("#4d4d4d")}
               ></ComposedLayer>
