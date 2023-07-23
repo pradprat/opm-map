@@ -52,10 +52,23 @@ const IndexPage: React.FC<PageProps> = () => {
   const [stateGeojson, setstateGeojson] = useState(
     geoJsonAddRandomFeatureId(az_geojson)
   );
-  const [pointGeojson, setpointGeojson] = useState();
+  const [pointGeojson, setpointGeojson] = useState<any>();
   const [zipSelected, setzipSelected] = useState("");
   const [bedroomList, setbedroomList] = useState([]);
   const [zipHovered, setzipHovered] = useState();
+
+  const filteredPointGeojson = useMemo(() => {
+    const pointFeature = pointGeojson?.features.find((item: any) => {
+      return item.properties.zipcode === zipHovered;
+    });
+    console.log(pointFeature);
+    console.log(zipHovered);
+
+    return {
+      type: "FeatureCollection",
+      features: zipHovered ? [pointFeature] : [],
+    };
+  }, [pointGeojson, zipHovered]);
 
   const selectedZipGeojson = useMemo(() => {
     const zipFeature = zipGeojson?.features.find((item: any) => {
@@ -190,8 +203,6 @@ const IndexPage: React.FC<PageProps> = () => {
   useEffect(() => {
     const zipData = zipGeojsonCache?.features;
     const filteredListring = zipData?.map((item: any) => {
-      console.log(zipData);
-
       const bedroomFilterByRevenue = filters.bedroom?.map((bedroom) => {
         const revenue = item.properties["num_avg__" + bedroom];
         const revenueFilter = filters.revenue[String(bedroom)];
@@ -225,24 +236,6 @@ const IndexPage: React.FC<PageProps> = () => {
     setzipGeojson(filteredZipGeojson);
     const pointGeojson = getPointGeojson(filteredZipGeojson);
     setpointGeojson(pointGeojson);
-    return () => {};
-  }, [filters.revenue]);
-
-  useEffect(() => {
-    const filteredZipGeojson = (zipGeojson as any)?.features.filter(
-      (item: any) => true
-    );
-    const filteredPointGeojson = (pointGeojson as any)?.features.filter(
-      (item: any) => true
-    );
-    (map.current?.getSource("zip") as any)?.setData({
-      type: "FeatureCollection",
-      features: filteredZipGeojson,
-    });
-    (map.current?.getSource("zip-label") as any)?.setData({
-      type: "FeatureCollection",
-      features: filteredPointGeojson,
-    });
     return () => {};
   }, [filters.revenue]);
 
@@ -284,9 +277,6 @@ const IndexPage: React.FC<PageProps> = () => {
   }, [level.current]);
 
   useEffect(() => {
-    console.log(zipHovered);
-    console.log(pointGeojson);
-
     map.current?.setFeatureState(
       { source: "zip-label", id: zipHovered },
       { hover: true }
@@ -437,7 +427,7 @@ const IndexPage: React.FC<PageProps> = () => {
               ></ComposedLayer>
               <ComposedLayer
                 id="zip-label"
-                geojson={pointGeojson}
+                geojson={filteredPointGeojson}
                 layerProps={labelLayer}
               ></ComposedLayer>
             </>
