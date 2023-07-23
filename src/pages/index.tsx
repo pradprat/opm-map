@@ -153,7 +153,7 @@ const IndexPage: React.FC<PageProps> = () => {
     });
     const listingCount = room_data.map((item) => {
       const bedCount = filters.bedroom.map((bedroom) => {
-        return item["num_count__" + bedroom];
+        return item["num_count_bed_" + bedroom];
       });
       const totalCount = bedCount.reduce((a, b) => a + b);
       return {
@@ -175,7 +175,7 @@ const IndexPage: React.FC<PageProps> = () => {
     if (level.current === "city") {
       const bedroomsMinMax = filters.bedroom.map((bedroom) => {
         const bedroomData = room_data.map((item) => {
-          return item["num_avg__" + bedroom];
+          return item["num_avg_rev_bed_" + bedroom];
         });
         const minmax = getMinMax(bedroomData);
         return {
@@ -204,7 +204,7 @@ const IndexPage: React.FC<PageProps> = () => {
     const zipData = zipGeojsonCache?.features;
     const filteredListring = zipData?.map((item: any) => {
       const bedroomFilterByRevenue = filters.bedroom?.map((bedroom) => {
-        const revenue = item.properties["num_avg__" + bedroom];
+        const revenue = item.properties["num_avg_rev_bed_" + bedroom];
         const revenueFilter = filters.revenue[String(bedroom)];
         return (
           revenue >= revenueFilter?.value[0] &&
@@ -281,12 +281,7 @@ const IndexPage: React.FC<PageProps> = () => {
       { source: "zip-label", id: zipHovered },
       { hover: true }
     );
-    return () => {
-      // map.current?.setFeatureState(
-      //   { source: "zip-label", id: zipHovered },
-      //   { hover: false }
-      // );
-    };
+    return () => {};
   }, [zipHovered]);
 
   const getMinMax = (data: any, key?: string) => {
@@ -364,22 +359,6 @@ const IndexPage: React.FC<PageProps> = () => {
                 Back to city view
               </Button>
             )}
-            {/* {level.current === "city" && (
-              <Button
-                onClick={() => {
-                  setzipSelected("");
-                  setlevel({
-                    ...level,
-                    current: "state",
-                    city: "",
-                  });
-                }}
-                bg={"white"}
-                shadow={"lg"}
-              >
-                Back to state view
-              </Button>
-            )} */}
           </Box>
         </VStack>
         <Map
@@ -400,14 +379,6 @@ const IndexPage: React.FC<PageProps> = () => {
               id="state"
               geojson={stateGeojson}
               layerProps={getGeneralLineLayer("#333333")}
-              // hoverEffect
-              // onClick={() => {
-              //   setlevel({
-              //     ...level,
-              //     current: "city",
-              //     state: "AZ",
-              //   });
-              // }}
             ></ComposedLayer>
           )}
           {level.current === "city" && (

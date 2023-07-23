@@ -70,7 +70,7 @@ export const getZipLabelLayer = ({ numBedroom }: any) => {
   const bedroomRevenueTextConfig: any[] = [];
 
   if (numBedroom.length === 1) {
-    bedroomRevenueTextConfig.push(["get", "avg__" + numBedroom[0]]);
+    bedroomRevenueTextConfig.push(["get", "avg_rev_bed_" + numBedroom[0]]);
     bedroomRevenueTextConfig.push({
       "font-scale": 1.2,
       "text-font": ["literal", ["DIN Offc Pro Regular"]],
@@ -81,7 +81,7 @@ export const getZipLabelLayer = ({ numBedroom }: any) => {
       bedroomRevenueTextConfig.push({
         // "text-color": COLOR_SCENE[index],
       });
-      bedroomRevenueTextConfig.push(["get", "avg__" + bedroom]);
+      bedroomRevenueTextConfig.push(["get", "avg_rev_bed_" + bedroom]);
       bedroomRevenueTextConfig.push({
         "font-scale": 1.2,
         "text-font": ["literal", ["DIN Offc Pro Regular"]],
