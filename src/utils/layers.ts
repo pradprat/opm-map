@@ -14,13 +14,13 @@ export const getGeneralLayer = () => {
     },
   };
 };
-export const getGeneralLineLayer = (color?: string) => {
+export const getGeneralLineLayer = (color?: string, width?: number) => {
   return {
     type: "line",
     layout: {},
     paint: {
       "line-color": color || "#232323",
-      "line-width": 2,
+      "line-width": width || 2,
     },
   };
 };
@@ -45,7 +45,7 @@ export const getZipLayer = ({ numBedroom, min, max }: any) => {
         COLOR_SCENE[0], // if 'GP' then yellow
         "noListing",
         "#000000", // if 'XX' then black
-        "#6B6B6B",
+        "#AAAAAA",
       ],
       "fill-opacity": [
         "case",

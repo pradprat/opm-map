@@ -46,7 +46,7 @@ const BedroomFilter = (props: Props) => {
                 }
               }}
               {...(isActive(item) ? selectedFilter : {})}
-              bg={isActive(item) ? props.colorScene?.[index] : "gray.300"}
+              bg={isActive(item) ? props.colorScene?.[Number(item) - 1] : "gray.300"}
               textAlign={"left"}
               justifyContent={"flex-start"}
             >

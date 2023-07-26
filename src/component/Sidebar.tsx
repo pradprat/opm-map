@@ -20,7 +20,7 @@ interface Props {}
 const Sidebar = (props: Props) => {
   return (
     <VStack alignItems={"start"} w={"full"}>
-      <Box px={8} py={8}>
+      <Box px={4} py={4}>
         <Image
           src={
             // "https://ik.imagekit.io/nantidatangcdn/locationlab/logo-small_qzZ3clHsz.svg"
@@ -33,7 +33,7 @@ const Sidebar = (props: Props) => {
           <AccordionItem border={"none"}>
             <AccordionButton>
               <Button variant={"unstyled"} w={"full"} textAlign={"left"}>
-                Phoenix
+                Cities
               </Button>
               <AccordionIcon />
             </AccordionButton>
@@ -54,7 +54,7 @@ const Sidebar = (props: Props) => {
                 background={"#0F0019"}
                 _hover={{ background: "#0F0019" }}
               >
-                Map
+                Phoenix
               </Button>
             </AccordionPanel>
           </AccordionItem>

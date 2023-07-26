@@ -2,10 +2,10 @@ import { useEffect, useRef, useState, useMemo } from "react";
 import { HeadFC, PageProps } from "gatsby";
 import mapboxgl from "mapbox-gl";
 import React from "react";
-import { Box, Button, Flex, VStack } from "@chakra-ui/react";
+import { Box, Button, Flex, Heading, Text, VStack } from "@chakra-ui/react";
 import pivot_bedroom from "../content/pivot_bedroom.json";
 import us_zip from "../content/us_zip.json";
-import Map, { Marker, NavigationControl } from "react-map-gl";
+import Map, { Marker, NavigationControl, Popup } from "react-map-gl";
 import {
   filterGeojson,
   geoJsonAddFeatureId,
@@ -28,9 +28,12 @@ import BedroomMarker from "../component/BedroomMarker";
 import Sidebar from "../component/Sidebar";
 import ComposedLayer from "../component/ComposedLayer";
 import Filters from "../component/Filters";
+import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
+import { MapboxPopup } from "react-map-gl/dist/esm/types";
+import "./index.css";
 mapboxgl.accessToken =
   "pk.eyJ1IjoicHJhZHByYXQiLCJhIjoiY2tnMHhwbXZvMDc4eDJ1cXd1ZmFueHk5YiJ9.wfhci5Mpn6cahjx3GnOfYQ";
-
 const IndexPage: React.FC<PageProps> = () => {
   const [refreshMarker, setrefreshMarker] = useState(0);
   const map = useRef<mapboxgl.Map>();
@@ -46,6 +49,7 @@ const IndexPage: React.FC<PageProps> = () => {
     city: "",
     zip: "",
   });
+  const [mouseCoord, setmouseCoord] = useState<any[]>([]);
   const [zipGeojson, setzipGeojson] = useState<any>();
 
   const [zipGeojsonCache, setzipGeojsonCache] = useState<any>();
@@ -250,16 +254,8 @@ const IndexPage: React.FC<PageProps> = () => {
         item["regions/zipcode_ids/0"] === zipSelected &&
         filters.bedroom.includes(String(item["bedrooms"]))
     );
-    const coloredBedrooms = bedroooms.map((item: any) => {
-      const bedIndex = filters.bedroom.indexOf(String(item["bedrooms"]));
-      const color = COLOR_SCENE[bedIndex];
-      return {
-        ...item,
-        color,
-      };
-    });
 
-    setbedroomList(coloredBedrooms);
+    setbedroomList(bedroooms);
     setTimeout(() => {
       zoomToZip(zipSelected);
     }, 500);
@@ -324,10 +320,9 @@ const IndexPage: React.FC<PageProps> = () => {
       current: "zip",
     });
   };
-
   return (
     <Flex>
-      <Box w={280} background={"#26023D"} color={"white"}>
+      <Box w={260} background={"#26023D"} color={"white"}>
         <Sidebar></Sidebar>
       </Box>
       <Box w="100%" h="100vh" flex={1}>
@@ -370,15 +365,44 @@ const IndexPage: React.FC<PageProps> = () => {
           }}
           style={{ width: "100%", height: "100vh" }}
           mapStyle="mapbox://styles/mapbox/light-v10"
-          onIdle={(e) => {
-            setrefreshMarker(e.target.getCenter().lat);
+          onMoveEnd={() => {
+            setrefreshMarker(Math.random());
+          }}
+          onMouseMove={(e) => {
+            setmouseCoord(e.lngLat.toArray());
           }}
         >
+          {zipHovered && (
+            <Popup
+              longitude={mouseCoord[0]}
+              latitude={mouseCoord[1]}
+              className="zip-popup"
+              closeButton={false}
+              offset={10}
+            >
+              <Heading size={"md"}>{zipHovered}</Heading>
+              {filters.bedroom.sort().map((bedroom: any) => {
+                const zipData = zipGeojsonCache?.features.find(
+                  (feature: any) => feature.properties.zipcode === zipHovered
+                )?.properties;
+                if (zipData[`avg_rev_bed_${bedroom}`]) {
+                  return (
+                    <Heading
+                      size={"sm"}
+                      color={COLOR_SCENE[Number(bedroom) - 1]}
+                    >
+                      {bedroom} Bedrooms : {zipData[`avg_rev_bed_${bedroom}`]}
+                    </Heading>
+                  );
+                }
+              })}
+            </Popup>
+          )}
           {level.current !== "zip" && (
             <ComposedLayer
               id="state"
               geojson={stateGeojson}
-              layerProps={getGeneralLineLayer("#333333")}
+              layerProps={getGeneralLineLayer("#333333", 3)}
             ></ComposedLayer>
           )}
           {level.current === "city" && (
@@ -395,11 +419,6 @@ const IndexPage: React.FC<PageProps> = () => {
                 id="zip-border"
                 geojson={allZipGeojson}
                 layerProps={getGeneralLineLayer("#4d4d4d")}
-              ></ComposedLayer>
-              <ComposedLayer
-                id="zip-label"
-                geojson={filteredPointGeojson}
-                layerProps={labelLayer}
               ></ComposedLayer>
             </>
           )}
