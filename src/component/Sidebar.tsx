@@ -20,7 +20,7 @@ interface Props {}
 const Sidebar = (props: Props) => {
   return (
     <VStack alignItems={"start"} w={"full"}>
-      <Box px={4} py={4}>
+      <Box px={8} py={8}>
         <Image
           src={
             // "https://ik.imagekit.io/nantidatangcdn/locationlab/logo-small_qzZ3clHsz.svg"

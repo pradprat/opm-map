@@ -381,7 +381,7 @@ const IndexPage: React.FC<PageProps> = () => {
               offset={10}
             >
               <Heading size={"md"}>{zipHovered}</Heading>
-              {filters.bedroom.sort().map((bedroom: any) => {
+              {filters.bedroom.sort().map((bedroom: any, index) => {
                 const zipData = zipGeojsonCache?.features.find(
                   (feature: any) => feature.properties.zipcode === zipHovered
                 )?.properties;
@@ -390,8 +390,9 @@ const IndexPage: React.FC<PageProps> = () => {
                     <Heading
                       size={"sm"}
                       color={COLOR_SCENE[Number(bedroom) - 1]}
+                      key={index}
                     >
-                      {bedroom} Bedrooms : {zipData[`avg_rev_bed_${bedroom}`]}
+                      {bedroom} Bedrooms:{zipData[`avg_rev_bed_${bedroom}`]}
                     </Heading>
                   );
                 }
