@@ -14,3 +14,4 @@ export const formatMoneyDataToNumber = (data: { [key: string]: any }) => {
     };
   }, {});
 };
+

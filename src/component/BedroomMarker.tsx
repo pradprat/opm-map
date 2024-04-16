@@ -6,18 +6,11 @@ import {
   Icon,
   IconButton,
   Image,
-  Popover,
-  PopoverArrow,
-  PopoverBody,
-  PopoverCloseButton,
-  PopoverContent,
-  PopoverTrigger,
-  Portal,
+  Link,
   Tag,
   TagLabel,
   VStack,
 } from "@chakra-ui/react";
-import { Link } from "gatsby";
 import React, { useState } from "react";
 import { BiLinkExternal } from "react-icons/bi";
 import { FaBed } from "react-icons/fa";
@@ -70,7 +63,7 @@ const BedroomMarker = (props: Props) => {
             <HStack justifyContent={"space-between"}>
               <Heading size={"sm"}>{props.item.title}</Heading>
               {props.item["Airbnb Link"] && (
-                <Link to={props.item["Airbnb Link"]} target="none">
+                <Link href={props.item["Airbnb Link"]} target="none">
                   <IconButton
                     as={BiLinkExternal}
                     aria-label="go"
