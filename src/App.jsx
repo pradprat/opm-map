@@ -322,9 +322,9 @@ const App = () => {
   };
   return (
     <Flex w={"full"}>
-      <Box w={260} background={"#26023D"} color={"white"}>
+      {/* <Box w={260} background={"#26023D"} color={"white"}>
         <Sidebar></Sidebar>
-      </Box>
+      </Box> */}
       <Box w="100%" h="100vh" flex={1}>
         <VStack
           position={"absolute"}
@@ -399,13 +399,6 @@ const App = () => {
               })}
             </Popup>
           )}
-          {level.current !== "zip" && (
-            <ComposedLayer
-              id="state"
-              geojson={stateGeojson}
-              layerProps={getGeneralLineLayer("#333333", 3)}
-            ></ComposedLayer>
-          )}
           {level.current === "city" && (
             <>
               <ComposedLayer
@@ -416,21 +409,7 @@ const App = () => {
                 onHover={(id) => setzipHovered(id)}
                 onClick={setOnClickZip}
               ></ComposedLayer>
-              <ComposedLayer
-                id="zip-border"
-                geojson={allZipGeojson}
-                layerProps={getGeneralLineLayer("#4d4d4d")}
-              ></ComposedLayer>
             </>
-          )}
-          {/* selected zip border */}
-          {level.current === "zip" && (
-            <ComposedLayer
-              id="zip-border-selected"
-              sourceId="zip-border-selected"
-              geojson={selectedZipGeojson}
-              layerProps={getGeneralLineLayer("#4d4d4d")}
-            ></ComposedLayer>
           )}
           {filteredBedroomList.map((item, index) => (
             <Marker
