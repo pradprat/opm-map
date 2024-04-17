@@ -1,12 +1,7 @@
 import { MutableRefObject, Ref, useEffect } from "react";
-import { HeadFC, PageProps, Script } from "gatsby";
 import mapboxgl from "mapbox-gl";
 import React from "react";
 import { Box, Heading, VStack } from "@chakra-ui/react";
-import { Select } from "chakra-react-select";
-import { getGeojson } from "../request/getGeojson";
-import pivot_bedroom from "../content/pivot_bedroom.json";
-import us_zip from "../content/us_zip.json";
 // passing ref to props
 interface Props {
   map?: MutableRefObject<mapboxgl.Map | undefined>;
